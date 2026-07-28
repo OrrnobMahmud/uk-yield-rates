@@ -18,19 +18,7 @@ class UK_Yield_API {
     /**
      * API endpoints
      */
-    private $financeflow_base_url = 'https://api.financeflowapi.com/v1';
     private $fred_base_url = 'https://api.stlouisfed.org/fred/series/observations';
-
-    /**
-     * FinanceFlowAPI bond types for UK gilt yields
-     */
-    private $financeflow_types = [
-        '2'  => '2y',   // 2-year
-        '5'  => '5y',   // 5-year
-        '10' => '10y',  // 10-year
-        '20' => '20y',  // 20-year
-        '30' => '30y',  // 30-year
-    ];
 
     /**
      * FRED series IDs for UK gilt yields (backup)
@@ -62,13 +50,10 @@ class UK_Yield_API {
      * Fetch yield rates with auto-failover
      */
     public function fetch_yields() {
-        $api_source = get_option('uk_yield_rates_api_source', 'auto');
+        $api_source = get_option('uk_yield_rates_api_source', 'manual');
 
         // Try configured source first
-        if ($api_source === 'financeflow') {
-            $data = $this->fetch_from_financeflow();
-            if ($data) return $data;
-        } elseif ($api_source === 'fred') {
+        if ($api_source === 'fred') {
             $data = $this->fetch_from_fred();
             if ($data) return $data;
         } elseif ($api_source === 'manual') {
@@ -77,9 +62,6 @@ class UK_Yield_API {
         }
 
         // Auto-failover: try all APIs
-        $data = $this->fetch_from_financeflow();
-        if ($data) return $data;
-
         $data = $this->fetch_from_fred();
         if ($data) return $data;
 
@@ -89,65 +71,6 @@ class UK_Yield_API {
 
         // All sources failed
         return false;
-    }
-
-    /**
-     * Fetch from FinanceFlowAPI (primary - free tier)
-     */
-    private function fetch_from_financeflow() {
-        $api_key = get_option('uk_yield_rates_financeflow_api_key', '');
-
-        if (empty($api_key)) {
-            error_log('UK Yield Rates: FinanceFlowAPI key not configured');
-            return false;
-        }
-
-        $yields = [];
-
-        foreach ($this->financeflow_types as $maturity => $type) {
-            $url = add_query_arg([
-                'country' => 'united_kingdom',
-                'type' => $type,
-            ], $this->financeflow_base_url . '/bonds-spot');
-
-            $response = wp_remote_get($url, [
-                'timeout' => 10,
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $api_key,
-                    'Content-Type' => 'application/json',
-                ],
-            ]);
-
-            if (is_wp_error($response)) {
-                error_log('UK Yield Rates: FinanceFlowAPI error for ' . $maturity . ' year - ' . $response->get_error_message());
-                continue;
-            }
-
-            $body = wp_remote_retrieve_body($response);
-            $data = json_decode($body, true);
-
-            if (!$data || !isset($data['data']['yield'])) {
-                error_log('UK Yield Rates: Invalid FinanceFlowAPI response for ' . $maturity . ' year');
-                continue;
-            }
-
-            $current_value = floatval($data['data']['yield']);
-            $previous_value = floatval($data['data']['previous_yield'] ?? $current_value);
-            $change = $current_value - $previous_value;
-
-            $yields[$maturity] = [
-                'maturity' => $maturity,
-                'yield' => $current_value,
-                'change' => $change,
-                'date' => $data['data']['date'] ?? date('Y-m-d'),
-            ];
-        }
-
-        if (empty($yields)) {
-            return false;
-        }
-
-        return $this->format_yield_data($yields, 'financeflow');
     }
 
     /**

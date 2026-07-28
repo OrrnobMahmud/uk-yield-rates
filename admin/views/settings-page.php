@@ -54,12 +54,11 @@ $cache_info = $cache->get_cache_info();
                             <th scope="row"><?php echo esc_html__('Data Source', 'uk-yield-rates'); ?></th>
                             <td>
                                 <select name="uk_yield_rates_api_source" id="uk-yield-data-source">
-                                    <option value="financeflow" <?php selected($api_source, 'financeflow'); ?>><?php echo esc_html__('FinanceFlowAPI (Recommended - Free Tier)', 'uk-yield-rates'); ?></option>
-                                    <option value="manual" <?php selected($api_source, 'manual'); ?>><?php echo esc_html__('Manual Entry (Backup - update rates yourself)', 'uk-yield-rates'); ?></option>
-                                    <option value="fred" <?php selected($api_source, 'fred'); ?>><?php echo esc_html__('FRED API (requires API key)', 'uk-yield-rates'); ?></option>
+                                    <option value="manual" <?php selected($api_source, 'manual'); ?>><?php echo esc_html__('Manual Entry (Recommended - FREE & Reliable)', 'uk-yield-rates'); ?></option>
+                                    <option value="fred" <?php selected($api_source, 'fred'); ?>><?php echo esc_html__('FRED API (Free tier available)', 'uk-yield-rates'); ?></option>
                                     <option value="auto" <?php selected($api_source, 'auto'); ?>><?php echo esc_html__('Auto (try all sources)', 'uk-yield-rates'); ?></option>
                                 </select>
-                                <p class="description"><?php echo esc_html__('FinanceFlowAPI provides free access to UK gilt yields (200 requests/month). Get your free API key at https://financeflowapi.com', 'uk-yield-rates'); ?></p>
+                                <p class="description"><?php echo esc_html__('Manual entry is recommended - just update rates once weekly from Bank of England website. 100% reliable, no API costs.', 'uk-yield-rates'); ?></p>
                             </td>
                         </tr>
                     </table>
@@ -123,39 +122,24 @@ $cache_info = $cache->get_cache_info();
                     <!-- FRED API Section -->
                     <div id="uk-yield-fred-settings" class="uk-yield-fred-section" style="display: <?php echo ($api_source === 'fred' || $api_source === 'auto') ? 'block' : 'none'; ?>;">
                         <h3><?php echo esc_html__('FRED API Configuration', 'uk-yield-rates'); ?></h3>
+                        <p class="description">
+                            <strong><?php echo esc_html__('Get your free API key:', 'uk-yield-rates'); ?></strong>
+                            <?php echo esc_html__('Visit https://fred.stlouisfed.org/docs/api/api_key.html to get a free API key from the Federal Reserve.', 'uk-yield-rates'); ?>
+                        </p>
                         <table class="form-table">
                             <tr>
                                 <th scope="row"><?php echo esc_html__('FRED API Key', 'uk-yield-rates'); ?></th>
                                 <td>
-                                    <input type="text" name="uk_yield_rates_fred_api_key" value="<?php echo esc_attr($fred_api_key); ?>" class="regular-text">
-                                    <p class="description"><?php echo esc_html__('Required for FRED API. Get your free API key from https://fred.stlouisfed.org/docs/api/api_key.html', 'uk-yield-rates'); ?></p>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <!-- FinanceFlowAPI Section -->
-                    <div id="uk-yield-financeflow-settings" class="uk-yield-financeflow-section" style="display: <?php echo ($api_source === 'financeflow' || $api_source === 'auto') ? 'block' : 'none'; ?>;">
-                        <h3><?php echo esc_html__('FinanceFlowAPI Configuration', 'uk-yield-rates'); ?></h3>
-                        <p class="description">
-                            <strong><?php echo esc_html__('Get your free API key:', 'uk-yield-rates'); ?></strong>
-                            <?php echo esc_html__('Visit https://financeflowapi.com and sign up for a free account. You get 200 requests/month - plenty for weekly updates!', 'uk-yield-rates'); ?>
-                        </p>
-                        <table class="form-table">
-                            <tr>
-                                <th scope="row"><?php echo esc_html__('FinanceFlowAPI Key', 'uk-yield-rates'); ?></th>
-                                <td>
-                                    <input type="text" name="uk_yield_rates_financeflow_api_key" value="<?php echo esc_attr(get_option('uk_yield_rates_financeflow_api_key', '')); ?>" class="regular-text" placeholder="Enter your API key">
-                                    <p class="description"><?php echo esc_html__('Paste your API key from FinanceFlowAPI dashboard.', 'uk-yield-rates'); ?></p>
+                                    <input type="text" name="uk_yield_rates_fred_api_key" value="<?php echo esc_attr($fred_api_key); ?>" class="regular-text" placeholder="Enter your API key">
+                                    <p class="description"><?php echo esc_html__('Paste your API key from FRED dashboard.', 'uk-yield-rates'); ?></p>
                                 </td>
                             </tr>
                         </table>
                         <p class="description">
                             <strong><?php echo esc_html__('What you get (Free Tier):', 'uk-yield-rates'); ?></strong>
                             <ul>
-                                <li><?php echo esc_html__('200 API requests per month', 'uk-yield-rates'); ?></li>
-                                <li><?php echo esc_html__('UK gilt yields (2Y, 5Y, 10Y, 20Y, 30Y)', 'uk-yield-rates'); ?></li>
-                                <li><?php echo esc_html__('Real-time current yields', 'uk-yield-rates'); ?></li>
+                                <li><?php echo esc_html__('UK gilt yield data from Federal Reserve', 'uk-yield-rates'); ?></li>
+                                <li><?php echo esc_html__('Multiple maturity options', 'uk-yield-rates'); ?></li>
                                 <li><?php echo esc_html__('No credit card required', 'uk-yield-rates'); ?></li>
                             </ul>
                         </p>
@@ -291,21 +275,21 @@ $cache_info = $cache->get_cache_info();
         <h2><?php echo esc_html__('Quick Start Guide', 'uk-yield-rates'); ?></h2>
 
         <div class="uk-yield-quickstart">
-            <h3><?php echo esc_html__('Option A: Automatic Updates (Recommended)', 'uk-yield-rates'); ?></h3>
-            <ol>
-                <li><?php echo esc_html__('Go to https://financeflowapi.com and sign up for a free account', 'uk-yield-rates'); ?></li>
-                <li><?php echo esc_html__('Copy your API key from the dashboard', 'uk-yield-rates'); ?></li>
-                <li><?php echo esc_html__('Select "FinanceFlowAPI" as data source above', 'uk-yield-rates'); ?></li>
-                <li><?php echo esc_html__('Paste your API key and click "Save Changes"', 'uk-yield-rates'); ?></li>
-                <li><?php echo esc_html__('Done! Yields update automatically (200 free requests/month)', 'uk-yield-rates'); ?></li>
-            </ol>
-
-            <h3><?php echo esc_html__('Option B: Manual Updates (Backup)', 'uk-yield-rates'); ?></h3>
+            <h3><?php echo esc_html__('Option A: Manual Updates (Recommended - FREE & Reliable)', 'uk-yield-rates'); ?></h3>
             <ol>
                 <li><?php echo esc_html__('Select "Manual Entry" as data source above', 'uk-yield-rates'); ?></li>
                 <li><?php echo esc_html__('Go to https://www.bankofengland.co.uk/statistics/yield-curves', 'uk-yield-rates'); ?></li>
                 <li><?php echo esc_html__('Enter current yields for 2Y, 5Y, 10Y, 20Y, and 30Y', 'uk-yield-rates'); ?></li>
-                <li><?php echo esc_html__('Click "Save Changes" - update when rates change', 'uk-yield-rates'); ?></li>
+                <li><?php echo esc_html__('Click "Save Changes"', 'uk-yield-rates'); ?></li>
+                <li><?php echo esc_html__('Update once weekly - all pages auto-update!', 'uk-yield-rates'); ?></li>
+            </ol>
+
+            <h3><?php echo esc_html__('Option B: Automatic Updates with FRED API (Free)', 'uk-yield-rates'); ?></h3>
+            <ol>
+                <li><?php echo esc_html__('Go to https://fred.stlouisfed.org/docs/api/api_key.html', 'uk-yield-rates'); ?></li>
+                <li><?php echo esc_html__('Sign up for a free API key', 'uk-yield-rates'); ?></li>
+                <li><?php echo esc_html__('Select "FRED API" as data source above', 'uk-yield-rates'); ?></li>
+                <li><?php echo esc_html__('Paste your API key and click "Save Changes"', 'uk-yield-rates'); ?></li>
             </ol>
 
             <h3><?php echo esc_html__('Step 2: Use Shortcodes in Your Content', 'uk-yield-rates'); ?></h3>

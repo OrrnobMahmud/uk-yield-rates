@@ -4,26 +4,37 @@ A WordPress plugin to display UK government bond (gilt) yield rates using shortc
 
 ## Features
 
-- **Automatic Updates** - FinanceFlowAPI integration (free tier: 200 requests/month)
-- **Manual Data Entry** - Reliable backup option
+- **Manual Data Entry** - Most reliable method (FREE)
+- **API Options** - FRED API (free tier) or Apify scraper (paid ~$0.40/month)
 - **Multiple Display Formats** - Inline, sidebar widget, table, and compact layouts
 - **Gutenberg Block** - Visual editor with live preview
 - **Shortcode Support** - Works with classic editor and page builders
 - **Responsive Design** - Looks great on all devices
 - **Light/Dark Themes** - Match your site's design
 
+## Data Source Options
+
+### Option A: Manual Entry (Recommended - FREE)
+✅ **100% reliable** - no API dependencies  
+✅ **No cost** - completely free  
+✅ **Easy maintenance** - update once weekly  
+✅ **Works immediately** - no setup required  
+
+### Option B: FRED API (FREE tier)
+✅ Free API key from Federal Reserve  
+✅ UK gilt yield data available  
+⚠️ Limited free requests per day  
+⚠️ Requires API key setup  
+
+### Option C: Apify Scraper (~$0.40/month)
+✅ Automated data fetching  
+✅ Uses official Bank of England data  
+⚠️ Costs $4.98 per 1,000 results  
+⚠️ May break if BoE changes website  
+
 ## Quick Start
 
-### Option A: Automatic Updates (Recommended)
-
-1. Go to https://financeflowapi.com and sign up for a free account
-2. Copy your API key from the dashboard
-3. Go to **Settings > UK Yield Rates** in WordPress admin
-4. Select "FinanceFlowAPI" as data source
-5. Paste your API key and click "Save Changes"
-6. Done! Yields update automatically (200 free requests/month)
-
-### Option B: Manual Updates (Backup)
+### Option A: Manual Updates (Recommended)
 
 1. Go to **Settings > UK Yield Rates** in WordPress admin
 2. Select "Manual Entry" as data source
@@ -31,6 +42,14 @@ A WordPress plugin to display UK government bond (gilt) yield rates using shortc
 4. Enter the current yields for 2Y, 5Y, 10Y, 20Y, and 30Y maturities
 5. Click "Save Changes"
 6. Update when rates change (set a weekly reminder)
+
+### Option B: Automatic Updates with FRED API
+
+1. Go to https://fred.stlouisfed.org/docs/api/api_key.html
+2. Sign up for a free API key
+3. Go to **Settings > UK Yield Rates** in WordPress admin
+4. Select "FRED API" as data source
+5. Enter your API key and click "Save Changes"
 
 ### Use Shortcodes in Your Content
 

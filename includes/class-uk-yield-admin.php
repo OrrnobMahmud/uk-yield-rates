@@ -43,7 +43,6 @@ class UK_Yield_Admin {
     public function register_settings() {
         // API Settings
         register_setting('uk_yield_rates_settings', 'uk_yield_rates_api_source');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_financeflow_api_key');
         register_setting('uk_yield_rates_settings', 'uk_yield_rates_fred_api_key');
         register_setting('uk_yield_rates_settings', 'uk_yield_rates_update_interval');
 
