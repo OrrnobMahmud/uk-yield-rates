@@ -46,6 +46,19 @@ class UK_Yield_Admin {
         register_setting('uk_yield_rates_settings', 'uk_yield_rates_fred_api_key');
         register_setting('uk_yield_rates_settings', 'uk_yield_rates_update_interval');
 
+        // Manual Entry Settings
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_date');
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_2_yield');
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_2_change');
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_5_yield');
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_5_change');
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_10_yield');
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_10_change');
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_20_yield');
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_20_change');
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_30_yield');
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_30_change');
+
         // Display Settings
         register_setting('uk_yield_rates_settings', 'uk_yield_rates_default_format');
         register_setting('uk_yield_rates_settings', 'uk_yield_rates_decimal_places');

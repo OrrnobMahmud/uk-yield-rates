@@ -226,7 +226,7 @@ final class UK_Yield_Rates {
     public function activate() {
         // Set default options
         $defaults = [
-            'api_source' => 'auto', // auto, boe, fred
+            'api_source' => 'manual', // manual, auto, boe, fred
             'update_interval' => '1', // hours
             'cache_duration' => '1', // hours
             'default_format' => 'inline',
@@ -236,11 +236,30 @@ final class UK_Yield_Rates {
             'theme' => 'light',
             'auto_refresh' => 'no',
             'refresh_interval' => '5', // minutes
+            'manual_date' => date('Y-m-d'),
         ];
 
         foreach ($defaults as $key => $value) {
             if (get_option('uk_yield_rates_' . $key) === false) {
                 update_option('uk_yield_rates_' . $key, $value);
+            }
+        }
+
+        // Set default manual yield values
+        $manual_defaults = [
+            '2' => ['yield' => '', 'change' => '0'],
+            '5' => ['yield' => '', 'change' => '0'],
+            '10' => ['yield' => '', 'change' => '0'],
+            '20' => ['yield' => '', 'change' => '0'],
+            '30' => ['yield' => '', 'change' => '0'],
+        ];
+
+        foreach ($manual_defaults as $maturity => $values) {
+            if (get_option('uk_yield_rates_manual_' . $maturity . '_yield') === false) {
+                update_option('uk_yield_rates_manual_' . $maturity . '_yield', $values['yield']);
+            }
+            if (get_option('uk_yield_rates_manual_' . $maturity . '_change') === false) {
+                update_option('uk_yield_rates_manual_' . $maturity . '_change', $values['change']);
             }
         }
 

@@ -13,6 +13,22 @@ jQuery(document).ready(function($) {
         $(target).addClass('active');
     });
 
+    // Show/hide manual entry section based on data source selection
+    $('#uk-yield-data-source').on('change', function() {
+        var source = $(this).val();
+
+        if (source === 'manual') {
+            $('#uk-yield-manual-entry').show();
+            $('#uk-yield-fred-settings').hide();
+        } else if (source === 'fred' || source === 'auto') {
+            $('#uk-yield-manual-entry').hide();
+            $('#uk-yield-fred-settings').show();
+        } else {
+            $('#uk-yield-manual-entry').hide();
+            $('#uk-yield-fred-settings').hide();
+        }
+    });
+
     // Force refresh cache
     $('#uk-yield-refresh-cache').on('click', function() {
         var $button = $(this);
@@ -29,18 +45,21 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 if (response.success) {
-                    alert('Cache refreshed successfully!');
+                    alert('Data refreshed successfully!');
                     location.reload();
                 } else {
                     alert('Error: ' + response.data);
                 }
             },
             error: function() {
-                alert('Error refreshing cache. Please try again.');
+                alert('Error refreshing data. Please try again.');
             },
             complete: function() {
                 $button.text(originalText).prop('disabled', false);
             }
         });
     });
+
+    // Initialize display on page load
+    $('#uk-yield-data-source').trigger('change');
 });

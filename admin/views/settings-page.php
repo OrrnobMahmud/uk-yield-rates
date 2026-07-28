@@ -39,51 +39,105 @@ $cache_info = $cache->get_cache_info();
 
         <div class="uk-yield-settings-tabs">
             <nav class="nav-tab-wrapper">
-                <a href="#api-settings" class="nav-tab nav-tab-active"><?php echo esc_html__('API Settings', 'uk-yield-rates'); ?></a>
+                <a href="#api-settings" class="nav-tab nav-tab-active"><?php echo esc_html__('Data Source', 'uk-yield-rates'); ?></a>
                 <a href="#display-settings" class="nav-tab"><?php echo esc_html__('Display Settings', 'uk-yield-rates'); ?></a>
                 <a href="#advanced-settings" class="nav-tab"><?php echo esc_html__('Advanced', 'uk-yield-rates'); ?></a>
             </nav>
 
             <div class="tab-content">
-                <!-- API Settings Tab -->
+                <!-- Data Source Settings Tab -->
                 <div id="api-settings" class="tab-panel active">
+                    <h2><?php echo esc_html__('Data Source Configuration', 'uk-yield-rates'); ?></h2>
+
                     <table class="form-table">
                         <tr>
-                            <th scope="row"><?php echo esc_html__('API Source', 'uk-yield-rates'); ?></th>
+                            <th scope="row"><?php echo esc_html__('Data Source', 'uk-yield-rates'); ?></th>
                             <td>
-                                <select name="uk_yield_rates_api_source">
-                                    <option value="auto" <?php selected($api_source, 'auto'); ?>><?php echo esc_html__('Auto (Bank of England + FRED)', 'uk-yield-rates'); ?></option>
-                                    <option value="boe" <?php selected($api_source, 'boe'); ?>><?php echo esc_html__('Bank of England Only', 'uk-yield-rates'); ?></option>
-                                    <option value="fred" <?php selected($api_source, 'fred'); ?>><?php echo esc_html__('FRED Only', 'uk-yield-rates'); ?></option>
+                                <select name="uk_yield_rates_api_source" id="uk-yield-data-source">
+                                    <option value="manual" <?php selected($api_source, 'manual'); ?>><?php echo esc_html__('Manual Entry (Recommended for reliability)', 'uk-yield-rates'); ?></option>
+                                    <option value="boe" <?php selected($api_source, 'boe'); ?>><?php echo esc_html__('Bank of England API (requires JavaScript execution)', 'uk-yield-rates'); ?></option>
+                                    <option value="fred" <?php selected($api_source, 'fred'); ?>><?php echo esc_html__('FRED API (requires API key)', 'uk-yield-rates'); ?></option>
+                                    <option value="auto" <?php selected($api_source, 'auto'); ?>><?php echo esc_html__('Auto (try all sources)', 'uk-yield-rates'); ?></option>
                                 </select>
-                                <p class="description"><?php echo esc_html__('Choose which API to use for fetching yield data.', 'uk-yield-rates'); ?></p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php echo esc_html__('FRED API Key', 'uk-yield-rates'); ?></th>
-                            <td>
-                                <input type="text" name="uk_yield_rates_fred_api_key" value="<?php echo esc_attr($fred_api_key); ?>" class="regular-text">
-                                <p class="description"><?php echo esc_html__('Required if using FRED API. Get your free API key from https://fred.stlouisfed.org/docs/api/api_key.html', 'uk-yield-rates'); ?></p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><?php echo esc_html__('Update Interval', 'uk-yield-rates'); ?></th>
-                            <td>
-                                <select name="uk_yield_rates_update_interval">
-                                    <option value="1" <?php selected($update_interval, '1'); ?>><?php echo esc_html__('Every hour', 'uk-yield-rates'); ?></option>
-                                    <option value="4" <?php selected($update_interval, '4'); ?>><?php echo esc_html__('Every 4 hours', 'uk-yield-rates'); ?></option>
-                                    <option value="12" <?php selected($update_interval, '12'); ?>><?php echo esc_html__('Every 12 hours', 'uk-yield-rates'); ?></option>
-                                    <option value="24" <?php selected($update_interval, '24'); ?>><?php echo esc_html__('Daily', 'uk-yield-rates'); ?></option>
-                                </select>
-                                <p class="description"><?php echo esc_html__('How often to fetch new yield data.', 'uk-yield-rates'); ?></p>
+                                <p class="description"><?php echo esc_html__('Choose how to get yield data. Manual entry is most reliable - just update rates when they change.', 'uk-yield-rates'); ?></p>
                             </td>
                         </tr>
                     </table>
 
+                    <!-- Manual Entry Section -->
+                    <div id="uk-yield-manual-entry" class="uk-yield-manual-section" style="display: <?php echo ($api_source === 'manual') ? 'block' : 'none'; ?>;">
+                        <h3><?php echo esc_html__('Manual Yield Rate Entry', 'uk-yield-rates'); ?></h3>
+                        <p class="description"><?php echo esc_html__('Enter current UK gilt yields. Update these when rates change (usually daily). You can find current rates at https://www.bankofengland.co.uk/statistics/yield-curves', 'uk-yield-rates'); ?></p>
+
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><?php echo esc_html__('Data Date', 'uk-yield-rates'); ?></th>
+                                <td>
+                                    <input type="date" name="uk_yield_rates_manual_date" value="<?php echo esc_attr(get_option('uk_yield_rates_manual_date', date('Y-m-d'))); ?>">
+                                    <p class="description"><?php echo esc_html__('Date of the yield rates you are entering.', 'uk-yield-rates'); ?></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php echo esc_html__('2-Year Gilt Yield (%)', 'uk-yield-rates'); ?></th>
+                                <td>
+                                    <input type="number" step="0.01" name="uk_yield_rates_manual_2_yield" value="<?php echo esc_attr(get_option('uk_yield_rates_manual_2_yield', '')); ?>" class="small-text" placeholder="e.g., 4.25">
+                                    <input type="number" step="0.01" name="uk_yield_rates_manual_2_change" value="<?php echo esc_attr(get_option('uk_yield_rates_manual_2_change', '0')); ?>" class="small-text" placeholder="Change (e.g., 0.02)">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php echo esc_html__('5-Year Gilt Yield (%)', 'uk-yield-rates'); ?></th>
+                                <td>
+                                    <input type="number" step="0.01" name="uk_yield_rates_manual_5_yield" value="<?php echo esc_attr(get_option('uk_yield_rates_manual_5_yield', '')); ?>" class="small-text" placeholder="e.g., 4.15">
+                                    <input type="number" step="0.01" name="uk_yield_rates_manual_5_change" value="<?php echo esc_attr(get_option('uk_yield_rates_manual_5_change', '0')); ?>" class="small-text" placeholder="Change (e.g., -0.01)">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php echo esc_html__('10-Year Gilt Yield (%)', 'uk-yield-rates'); ?></th>
+                                <td>
+                                    <input type="number" step="0.01" name="uk_yield_rates_manual_10_yield" value="<?php echo esc_attr(get_option('uk_yield_rates_manual_10_yield', '')); ?>" class="small-text" placeholder="e.g., 4.05">
+                                    <input type="number" step="0.01" name="uk_yield_rates_manual_10_change" value="<?php echo esc_attr(get_option('uk_yield_rates_manual_10_change', '0')); ?>" class="small-text" placeholder="Change (e.g., 0.00)">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php echo esc_html__('20-Year Gilt Yield (%)', 'uk-yield-rates'); ?></th>
+                                <td>
+                                    <input type="number" step="0.01" name="uk_yield_rates_manual_20_yield" value="<?php echo esc_attr(get_option('uk_yield_rates_manual_20_yield', '')); ?>" class="small-text" placeholder="e.g., 4.35">
+                                    <input type="number" step="0.01" name="uk_yield_rates_manual_20_change" value="<?php echo esc_attr(get_option('uk_yield_rates_manual_20_change', '0')); ?>" class="small-text" placeholder="Change (e.g., 0.03)">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php echo esc_html__('30-Year Gilt Yield (%)', 'uk-yield-rates'); ?></th>
+                                <td>
+                                    <input type="number" step="0.01" name="uk_yield_rates_manual_30_yield" value="<?php echo esc_attr(get_option('uk_yield_rates_manual_30_yield', '')); ?>" class="small-text" placeholder="e.g., 4.45">
+                                    <input type="number" step="0.01" name="uk_yield_rates_manual_30_change" value="<?php echo esc_attr(get_option('uk_yield_rates_manual_30_change', '0')); ?>" class="small-text" placeholder="Change (e.g., -0.02)">
+                                </td>
+                            </tr>
+                        </table>
+
+                        <p class="description">
+                            <strong><?php echo esc_html__('Quick Update Tip:', 'uk-yield-rates'); ?></strong>
+                            <?php echo esc_html__('Check https://www.bankofengland.co.uk/statistics/yield-curves for current rates, then enter them above. The plugin will automatically display them across all your pages!', 'uk-yield-rates'); ?>
+                        </p>
+                    </div>
+
+                    <!-- FRED API Section -->
+                    <div id="uk-yield-fred-settings" class="uk-yield-fred-section" style="display: <?php echo ($api_source === 'fred' || $api_source === 'auto') ? 'block' : 'none'; ?>;">
+                        <h3><?php echo esc_html__('FRED API Configuration', 'uk-yield-rates'); ?></h3>
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><?php echo esc_html__('FRED API Key', 'uk-yield-rates'); ?></th>
+                                <td>
+                                    <input type="text" name="uk_yield_rates_fred_api_key" value="<?php echo esc_attr($fred_api_key); ?>" class="regular-text">
+                                    <p class="description"><?php echo esc_html__('Required for FRED API. Get your free API key from https://fred.stlouisfed.org/docs/api/api_key.html', 'uk-yield-rates'); ?></p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
                     <div class="uk-yield-cache-info">
-                        <h3><?php echo esc_html__('Cache Status', 'uk-yield-rates'); ?></h3>
+                        <h3><?php echo esc_html__('Current Status', 'uk-yield-rates'); ?></h3>
                         <p>
-                            <strong><?php echo esc_html__('Has Cache:', 'uk-yield-rates'); ?></strong>
+                            <strong><?php echo esc_html__('Has Data:', 'uk-yield-rates'); ?></strong>
                             <?php echo $cache_info['has_cache'] ? '✅' : '❌'; ?>
                         </p>
                         <p>
@@ -99,7 +153,7 @@ $cache_info = $cache->get_cache_info();
                             <?php echo $cache_info['is_stale'] ? '⚠️ Yes' : '✅ No'; ?>
                         </p>
                         <button type="button" class="button button-secondary" id="uk-yield-refresh-cache">
-                            <?php echo esc_html__('Force Refresh Cache', 'uk-yield-rates'); ?>
+                            <?php echo esc_html__('Refresh Data', 'uk-yield-rates'); ?>
                         </button>
                     </div>
                 </div>
@@ -207,10 +261,25 @@ $cache_info = $cache->get_cache_info();
     </form>
 
     <div class="uk-yield-shortcodes-help">
-        <h2><?php echo esc_html__('Shortcode Usage', 'uk-yield-rates'); ?></h2>
+        <h2><?php echo esc_html__('Quick Start Guide', 'uk-yield-rates'); ?></h2>
+
+        <div class="uk-yield-quickstart">
+            <h3><?php echo esc_html__('Step 1: Enter Current Yield Rates', 'uk-yield-rates'); ?></h3>
+            <ol>
+                <li><?php echo esc_html__('Go to https://www.bankofengland.co.uk/statistics/yield-curves', 'uk-yield-rates'); ?></li>
+                <li><?php echo esc_html__('Find the current yields for 2Y, 5Y, 10Y, 20Y, and 30Y maturities', 'uk-yield-rates'); ?></li>
+                <li><?php echo esc_html__('Enter them in the "Data Source" tab above', 'uk-yield-rates'); ?></li>
+                <li><?php echo esc_html__('Click "Save Changes"', 'uk-yield-rates'); ?></li>
+            </ol>
+
+            <h3><?php echo esc_html__('Step 2: Use Shortcodes in Your Content', 'uk-yield-rates'); ?></h3>
+            <p><?php echo esc_html__('Add these shortcodes anywhere in your pages or posts:', 'uk-yield-rates'); ?></p>
+        </div>
+
         <div class="uk-yield-examples">
-            <h3><?php echo esc_html__('Inline (for paragraphs)', 'uk-yield-rates'); ?></h3>
+            <h3><?php echo esc_html__('For Service Pages (Recommended)', 'uk-yield-rates'); ?></h3>
             <code>[uk_yield_rates inline="yes" maturity="10"]</code>
+            <p><?php echo esc_html__('Example: "Our mortgage rates are influenced by the [uk_yield_rates inline="yes" maturity="10"] 10-year gilt yield."', 'uk-yield-rates'); ?></p>
 
             <h3><?php echo esc_html__('Sidebar Widget', 'uk-yield-rates'); ?></h3>
             <code>[uk_yield_rates format="sidebar"]</code>
@@ -220,6 +289,34 @@ $cache_info = $cache->get_cache_info();
 
             <h3><?php echo esc_html__('Multiple Maturities Inline', 'uk-yield-rates'); ?></h3>
             <code>[uk_yield_rates inline="yes" maturity="2,5,10"]</code>
+        </div>
+
+        <div class="uk-yield-quickstart">
+            <h3><?php echo esc_html__('Step 3: Update Rates (When They Change)', 'uk-yield-rates'); ?></h3>
+            <ol>
+                <li><?php echo esc_html__('Check the Bank of England yield curves page periodically', 'uk-yield-rates'); ?></li>
+                <li><?php echo esc_html__('Update the rates in the plugin settings', 'uk-yield-rates'); ?></li>
+                <li><?php echo esc_html__('All your pages will automatically show the new rates!', 'uk-yield-rates'); ?></li>
+            </ol>
+
+            <p><strong><?php echo esc_html__('Pro Tip:', 'uk-yield-rates'); ?></strong> <?php echo esc_html__('Set a calendar reminder to update rates weekly or whenever Bank of England announces changes.', 'uk-yield-rates'); ?></p>
+        </div>
+    </div>
+
+    <div class="uk-yield-shortcodes-help">
+        <h2><?php echo esc_html__('Shortcode Reference', 'uk-yield-rates'); ?></h2>
+        <div class="uk-yield-examples">
+            <h3><?php echo esc_html__('All Available Options', 'uk-yield-rates'); ?></h3>
+            <code>[uk_yield_rates inline="yes" maturity="10" format="inline" show_change="yes" decimal="2" theme="light"]</code>
+
+            <p><strong><?php echo esc_html__('Attributes:', 'uk-yield-rates'); ?></strong></p>
+            <ul>
+                <li><code>maturity</code> - <?php echo esc_html__('all, 2, 5, 10, 20, 30 (or comma-separated)', 'uk-yield-rates'); ?></li>
+                <li><code>format</code> - <?php echo esc_html__('inline, sidebar, table, compact', 'uk-yield-rates'); ?></li>
+                <li><code>show_change</code> - <?php echo esc_html__('yes, no', 'uk-yield-rates'); ?></li>
+                <li><code>decimal</code> - <?php echo esc_html__('2, 3, 4', 'uk-yield-rates'); ?></li>
+                <li><code>theme</code> - <?php echo esc_html__('light, dark', 'uk-yield-rates'); ?></li>
+            </ul>
         </div>
     </div>
 </div>

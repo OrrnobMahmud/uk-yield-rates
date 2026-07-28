@@ -179,4 +179,16 @@ class UK_Yield_Cache {
 
         return false;
     }
+
+    /**
+     * Save manual yield data to cache
+     */
+    public function save_manual_data($yield_data) {
+        if (empty($yield_data) || !isset($yield_data['yields'])) {
+            return false;
+        }
+
+        $this->set_cached_data($yield_data);
+        return true;
+    }
 }
