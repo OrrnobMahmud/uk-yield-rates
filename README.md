@@ -4,8 +4,8 @@ A WordPress plugin to display UK government bond (gilt) yield rates using shortc
 
 ## Features
 
-- **Manual Data Entry** - Most reliable method - just enter rates from Bank of England
-- **API Support** - Bank of England + FRED APIs available (optional)
+- **Automatic Updates** - FinanceFlowAPI integration (free tier: 200 requests/month)
+- **Manual Data Entry** - Reliable backup option
 - **Multiple Display Formats** - Inline, sidebar widget, table, and compact layouts
 - **Gutenberg Block** - Visual editor with live preview
 - **Shortcode Support** - Works with classic editor and page builders
@@ -14,15 +14,25 @@ A WordPress plugin to display UK government bond (gilt) yield rates using shortc
 
 ## Quick Start
 
-### Step 1: Enter Current Yield Rates
+### Option A: Automatic Updates (Recommended)
+
+1. Go to https://financeflowapi.com and sign up for a free account
+2. Copy your API key from the dashboard
+3. Go to **Settings > UK Yield Rates** in WordPress admin
+4. Select "FinanceFlowAPI" as data source
+5. Paste your API key and click "Save Changes"
+6. Done! Yields update automatically (200 free requests/month)
+
+### Option B: Manual Updates (Backup)
 
 1. Go to **Settings > UK Yield Rates** in WordPress admin
-2. In the **Data Source** tab, you'll see manual entry fields
+2. Select "Manual Entry" as data source
 3. Visit https://www.bankofengland.co.uk/statistics/yield-curves
 4. Enter the current yields for 2Y, 5Y, 10Y, 20Y, and 30Y maturities
-5. Click **Save Changes**
+5. Click "Save Changes"
+6. Update when rates change (set a weekly reminder)
 
-### Step 2: Use Shortcodes in Your Content
+### Use Shortcodes in Your Content
 
 Add these shortcodes anywhere in your pages or posts:
 
@@ -39,14 +49,6 @@ Our mortgage rates are influenced by the [uk_yield_rates inline="yes" maturity="
 // Multiple maturities inline
 [uk_yield_rates inline="yes" maturity="2,5,10"]
 ```
-
-### Step 3: Update Rates (When They Change)
-
-1. Check the Bank of England yield curves page periodically
-2. Update the rates in the plugin settings
-3. All your pages will automatically show the new rates!
-
-**Pro Tip:** Set a calendar reminder to update rates weekly or whenever Bank of England announces changes.
 
 ## Shortcode Attributes
 
