@@ -1,0 +1,91 @@
+# Copyright (C) 2026 Your Name
+# This file is distributed under the same license as the UK Yield Rates Live plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: UK Yield Rates Live 1.0.0\n"
+"Report-Msgid-Bugs-To: https://example.com/support\n"
+"POT-Creation-Date: 2026-07-28 00:00+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: includes/class-uk-yield-shortcode.php:60
+msgid "Yield rates temporarily unavailable."
+msgstr ""
+
+#: includes/class-uk-yield-shortcode.php:68
+msgid "No yield data available."
+msgstr ""
+
+#: includes/class-uk-yield-shortcode.php:105
+msgid "UK Gilt Yields"
+msgstr ""
+
+#: includes/class-uk-yield-shortcode.php:136
+#: includes/class-uk-yield-shortcode.php:211
+msgid "Updated: "
+msgstr ""
+
+#: includes/class-uk-yield-shortcode.php:161
+msgid "Maturity"
+msgstr ""
+
+#: includes/class-uk-yield-shortcode.php:162
+msgid "Yield"
+msgstr ""
+
+#: includes/class-uk-yield-shortcode.php:164
+msgid "Change"
+msgstr ""
+
+#: includes/class-uk-yield-shortcode.php:165
+msgid "Status"
+msgstr ""
+
+#: includes/class-uk-yield-shortcode.php:193
+msgid "Rising"
+msgstr ""
+
+#: includes/class-uk-yield-shortcode.php:195
+msgid "Falling"
+msgstr ""
+
+#: includes/class-uk-yield-shortcode.php:197
+msgid "Stable"
+msgstr ""
+
+#: includes/class-uk-yield-shortcode.php:205
+msgid "Last Updated: "
+msgstr ""
+
+#: uk-yield-rates.php:200
+msgid "Security check failed."
+msgstr ""
+
+#: uk-yield-rates.php:205
+msgid "Insufficient permissions."
+msgstr ""
+
+#: uk-yield-rates.php:209
+msgid "Cache refreshed successfully."
+msgstr ""
+
+#: uk-yield-rates.php:211
+msgid "Failed to refresh cache. Please check API settings."
+msgstr ""
+
+#: uk-yield-rates.php:224
+msgid "Failed to fetch yield data."
+msgstr ""
+
+#: uk-yield-rates.php:242
+msgid "No shortcode provided."
+msgstr ""
+
+#: uk-yield-rates.php:247
+msgid "Invalid shortcode."
+msgstr ""

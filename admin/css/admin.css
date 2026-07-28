@@ -1,0 +1,71 @@
+/* UK Yield Rates Admin Styles */
+
+.uk-yield-settings-tabs .nav-tab-wrapper {
+    margin-bottom: 20px;
+}
+
+.uk-yield-settings-tabs .tab-content {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-top: none;
+    padding: 20px;
+}
+
+.uk-yield-settings-tabs .tab-panel {
+    display: none;
+}
+
+.uk-yield-settings-tabs .tab-panel.active {
+    display: block;
+}
+
+.uk-yield-cache-info {
+    background: #f8f9fa;
+    border: 1px solid #e2e4e7;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 4px;
+}
+
+.uk-yield-cache-info h3 {
+    margin-top: 0;
+}
+
+.uk-yield-cache-info p {
+    margin: 5px 0;
+}
+
+.uk-yield-shortcodes-help {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.uk-yield-shortcodes-help h2 {
+    margin-top: 0;
+}
+
+.uk-yield-examples {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.uk-yield-examples h3 {
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.uk-yield-examples h3:first-child {
+    margin-top: 0;
+}
+
+.uk-yield-examples code {
+    display: block;
+    background: #2d3748;
+    color: #e2e8f0;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 13px;
+}

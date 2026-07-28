@@ -1,0 +1,43 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 2,
+    "name": "uk-yield-rates/yield-rates",
+    "title": "UK Yield Rates",
+    "description": "Display live UK gilt yield rates",
+    "category": "widgets",
+    "icon": "chart-line",
+    "keywords": ["yield", "rates", "uk", "gilt", "bonds", "finance"],
+    "supports": {
+        "html": false,
+        "align": ["wide", "full"],
+        "spacing": {
+            "margin": true,
+            "padding": true
+        }
+    },
+    "attributes": {
+        "maturity": {
+            "type": "string",
+            "default": "all"
+        },
+        "format": {
+            "type": "string",
+            "default": "inline"
+        },
+        "showChange": {
+            "type": "boolean",
+            "default": true
+        },
+        "decimalPlaces": {
+            "type": "string",
+            "default": "2"
+        },
+        "theme": {
+            "type": "string",
+            "default": "light"
+        }
+    },
+    "editorScript": "uk-yield-block-editor",
+    "editorStyle": "uk-yield-block-editor-style",
+    "style": "uk-yield-block-style"
+}

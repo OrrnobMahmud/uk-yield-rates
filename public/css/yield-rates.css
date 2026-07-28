@@ -1,0 +1,277 @@
+/* UK Yield Rates Frontend Styles */
+
+/* Base styles */
+.uk-yield-inline,
+.uk-yield-compact {
+    display: inline;
+    white-space: nowrap;
+}
+
+.uk-yield-item {
+    margin-right: 5px;
+}
+
+.uk-yield-label {
+    font-weight: 500;
+}
+
+.uk-yield-value {
+    font-weight: 600;
+}
+
+/* Change indicators */
+.uk-yield-change {
+    font-size: 0.9em;
+}
+
+.uk-yield-change.positive {
+    color: #16a34a;
+}
+
+.uk-yield-change.negative {
+    color: #dc2626;
+}
+
+.uk-yield-change.neutral {
+    color: #6b7280;
+}
+
+/* Updated timestamp */
+.uk-yield-updated {
+    font-size: 0.85em;
+    color: #6b7280;
+    font-style: italic;
+}
+
+.uk-yield-updated-label {
+    font-style: normal;
+}
+
+/* Sidebar Widget */
+.uk-yield-sidebar {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    max-width: 280px;
+}
+
+.uk-yield-sidebar-header {
+    background: #1e40af;
+    color: #fff;
+    padding: 12px 15px;
+    border-radius: 8px 8px 0 0;
+}
+
+.uk-yield-sidebar-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.uk-yield-sidebar-content {
+    padding: 10px 15px;
+}
+
+.uk-yield-sidebar-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.uk-yield-sidebar-row:last-child {
+    border-bottom: none;
+}
+
+.uk-yield-sidebar-maturity {
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.uk-yield-sidebar-yield {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.uk-yield-sidebar-change {
+    font-size: 12px;
+    margin-left: 8px;
+}
+
+.uk-yield-sidebar-footer {
+    padding: 10px 15px;
+    background: #f9fafb;
+    border-radius: 0 0 8px 8px;
+    font-size: 12px;
+    color: #6b7280;
+    text-align: center;
+}
+
+/* Table Layout */
+.uk-yield-table-wrapper {
+    overflow-x: auto;
+    margin: 15px 0;
+}
+
+.uk-yield-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.uk-yield-table th {
+    background: #1e40af;
+    color: #fff;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.uk-yield-table td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.uk-yield-table tbody tr:nth-child(even) {
+    background: #f9fafb;
+}
+
+.uk-yield-table tbody tr:hover {
+    background: #f3f4f6;
+}
+
+.uk-yield-th-maturity,
+.uk-yield-td-maturity {
+    width: 25%;
+}
+
+.uk-yield-th-yield,
+.uk-yield-td-yield {
+    width: 25%;
+}
+
+.uk-yield-th-change,
+.uk-yield-td-change {
+    width: 25%;
+}
+
+.uk-yield-th-status,
+.uk-yield-td-status {
+    width: 25%;
+}
+
+.uk-yield-td-yield {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.uk-yield-td-change.positive,
+.uk-yield-td-status.positive {
+    color: #16a34a;
+}
+
+.uk-yield-td-change.negative,
+.uk-yield-td-status.negative {
+    color: #dc2626;
+}
+
+.uk-yield-td-change.neutral,
+.uk-yield-td-status.neutral {
+    color: #6b7280;
+}
+
+.uk-yield-table-footer {
+    padding: 10px 0;
+    font-size: 12px;
+    color: #6b7280;
+    text-align: right;
+}
+
+/* Dark Theme */
+.uk-yield-sidebar.uk-yield-dark {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.uk-yield-sidebar.uk-yield-dark .uk-yield-sidebar-header {
+    background: #374151;
+}
+
+.uk-yield-sidebar.uk-yield-dark .uk-yield-sidebar-title {
+    color: #f9fafb;
+}
+
+.uk-yield-sidebar.uk-yield-dark .uk-yield-sidebar-content {
+    background: #1f2937;
+}
+
+.uk-yield-sidebar.uk-yield-dark .uk-yield-sidebar-row {
+    border-color: #374151;
+}
+
+.uk-yield-sidebar.uk-yield-dark .uk-yield-sidebar-maturity {
+    color: #d1d5db;
+}
+
+.uk-yield-sidebar.uk-yield-dark .uk-yield-sidebar-yield {
+    color: #f9fafb;
+}
+
+.uk-yield-sidebar.uk-yield-dark .uk-yield-sidebar-footer {
+    background: #111827;
+    color: #9ca3af;
+}
+
+.uk-yield-table.uk-yield-dark th {
+    background: #374151;
+}
+
+.uk-yield-table.uk-yield-dark td {
+    border-color: #374151;
+    color: #e5e7eb;
+}
+
+.uk-yield-table.uk-yield-dark tbody tr:nth-child(even) {
+    background: #1f2937;
+}
+
+.uk-yield-table.uk-yield-dark tbody tr:hover {
+    background: #374151;
+}
+
+/* Error state */
+.uk-yield-error {
+    display: inline-block;
+    background: #fef2f2;
+    color: #dc2626;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .uk-yield-table th,
+    .uk-yield-table td {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    .uk-yield-sidebar {
+        max-width: 100%;
+    }
+
+    .uk-yield-inline {
+        display: block;
+        margin: 10px 0;
+    }
+
+    .uk-yield-item {
+        display: block;
+        margin-bottom: 5px;
+    }
+}
