@@ -18,23 +18,22 @@ class UK_Yield_API {
     /**
      * API endpoints
      */
-    private $boe_base_url = 'https://www.bankofengland.co.uk/boeapps/database/FromShowColumns.asp';
+    private $financeflow_base_url = 'https://api.financeflowapi.com/v1';
     private $fred_base_url = 'https://api.stlouisfed.org/fred/series/observations';
-    private $dmo_base_url = 'https://www.dmo.gov.uk/responsibilities/gilt-market/market-information/real-yields';
 
     /**
-     * Bank of England series codes for gilt yields
+     * FinanceFlowAPI bond types for UK gilt yields
      */
-    private $boe_series_codes = [
-        '2'  => 'IUDGILS02',  // 2-year
-        '5'  => 'IUDGILS05',  // 5-year
-        '10' => 'IUDGILS10',  // 10-year
-        '20' => 'IUDGILS20',  // 20-year
-        '30' => 'IUDGILS30',  // 30-year
+    private $financeflow_types = [
+        '2'  => '2y',   // 2-year
+        '5'  => '5y',   // 5-year
+        '10' => '10y',  // 10-year
+        '20' => '20y',  // 20-year
+        '30' => '30y',  // 30-year
     ];
 
     /**
-     * FRED series IDs for UK gilt yields
+     * FRED series IDs for UK gilt yields (backup)
      */
     private $fred_series_ids = [
         '2'  => 'IRLTLT01GBM156N',  // 2-year (UK long-term)
@@ -42,14 +41,6 @@ class UK_Yield_API {
         '10' => 'IRLTLT10GBM156N',  // 10-year (UK long-term)
         '20' => 'IRLTLT20GBM156N',  // 20-year (UK long-term)
         '30' => 'IRLTLT30GBM156N',  // 30-year (UK long-term)
-    ];
-
-    /**
-     * DMO CSV download URLs
-     */
-    private $dmo_csv_urls = [
-        'real' => 'https://www.dmo.gov.uk/responsibilities/gilt-market/market-information/real-yields',
-        'nominal' => 'https://www.dmo.gov.uk/responsibilities/gilt-market/market-information/nominal-yields',
     ];
 
     /**
@@ -74,8 +65,8 @@ class UK_Yield_API {
         $api_source = get_option('uk_yield_rates_api_source', 'auto');
 
         // Try configured source first
-        if ($api_source === 'boe') {
-            $data = $this->fetch_from_boe();
+        if ($api_source === 'financeflow') {
+            $data = $this->fetch_from_financeflow();
             if ($data) return $data;
         } elseif ($api_source === 'fred') {
             $data = $this->fetch_from_fred();
@@ -86,7 +77,7 @@ class UK_Yield_API {
         }
 
         // Auto-failover: try all APIs
-        $data = $this->fetch_from_boe();
+        $data = $this->fetch_from_financeflow();
         if ($data) return $data;
 
         $data = $this->fetch_from_fred();
@@ -98,6 +89,65 @@ class UK_Yield_API {
 
         // All sources failed
         return false;
+    }
+
+    /**
+     * Fetch from FinanceFlowAPI (primary - free tier)
+     */
+    private function fetch_from_financeflow() {
+        $api_key = get_option('uk_yield_rates_financeflow_api_key', '');
+
+        if (empty($api_key)) {
+            error_log('UK Yield Rates: FinanceFlowAPI key not configured');
+            return false;
+        }
+
+        $yields = [];
+
+        foreach ($this->financeflow_types as $maturity => $type) {
+            $url = add_query_arg([
+                'country' => 'united_kingdom',
+                'type' => $type,
+            ], $this->financeflow_base_url . '/bonds-spot');
+
+            $response = wp_remote_get($url, [
+                'timeout' => 10,
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $api_key,
+                    'Content-Type' => 'application/json',
+                ],
+            ]);
+
+            if (is_wp_error($response)) {
+                error_log('UK Yield Rates: FinanceFlowAPI error for ' . $maturity . ' year - ' . $response->get_error_message());
+                continue;
+            }
+
+            $body = wp_remote_retrieve_body($response);
+            $data = json_decode($body, true);
+
+            if (!$data || !isset($data['data']['yield'])) {
+                error_log('UK Yield Rates: Invalid FinanceFlowAPI response for ' . $maturity . ' year');
+                continue;
+            }
+
+            $current_value = floatval($data['data']['yield']);
+            $previous_value = floatval($data['data']['previous_yield'] ?? $current_value);
+            $change = $current_value - $previous_value;
+
+            $yields[$maturity] = [
+                'maturity' => $maturity,
+                'yield' => $current_value,
+                'change' => $change,
+                'date' => $data['data']['date'] ?? date('Y-m-d'),
+            ];
+        }
+
+        if (empty($yields)) {
+            return false;
+        }
+
+        return $this->format_yield_data($yields, 'financeflow');
     }
 
     /**

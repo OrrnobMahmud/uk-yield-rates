@@ -13,19 +13,26 @@ jQuery(document).ready(function($) {
         $(target).addClass('active');
     });
 
-    // Show/hide manual entry section based on data source selection
+    // Show/hide sections based on data source selection
     $('#uk-yield-data-source').on('change', function() {
         var source = $(this).val();
 
+        // Hide all sections first
+        $('#uk-yield-manual-entry').hide();
+        $('#uk-yield-fred-settings').hide();
+        $('#uk-yield-financeflow-settings').hide();
+
+        // Show relevant section
         if (source === 'manual') {
             $('#uk-yield-manual-entry').show();
-            $('#uk-yield-fred-settings').hide();
-        } else if (source === 'fred' || source === 'auto') {
-            $('#uk-yield-manual-entry').hide();
+        } else if (source === 'financeflow') {
+            $('#uk-yield-financeflow-settings').show();
+        } else if (source === 'fred') {
             $('#uk-yield-fred-settings').show();
-        } else {
-            $('#uk-yield-manual-entry').hide();
-            $('#uk-yield-fred-settings').hide();
+        } else if (source === 'auto') {
+            // Show all API options in auto mode
+            $('#uk-yield-financeflow-settings').show();
+            $('#uk-yield-fred-settings').show();
         }
     });
 

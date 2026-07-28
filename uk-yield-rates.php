@@ -226,7 +226,7 @@ final class UK_Yield_Rates {
     public function activate() {
         // Set default options
         $defaults = [
-            'api_source' => 'manual', // manual, auto, boe, fred
+            'api_source' => 'financeflow', // financeflow, manual, auto, fred
             'update_interval' => '1', // hours
             'cache_duration' => '1', // hours
             'default_format' => 'inline',
