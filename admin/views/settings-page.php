@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Get current settings
-$api_source = get_option('uk_yield_rates_api_source', 'auto');
+$api_source = get_option('uk_yield_rates_api_source', 'manual');
 $fred_api_key = get_option('uk_yield_rates_fred_api_key', '');
 $update_interval = get_option('uk_yield_rates_update_interval', '1');
 $default_format = get_option('uk_yield_rates_default_format', 'inline');

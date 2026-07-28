@@ -6,7 +6,34 @@ import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, PanelRow, SelectControl, ToggleControl, Spinner } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
+import { buildShortcode } from './shortcode-builder';
 import './editor.css';
+
+// Sanitize HTML to prevent XSS attacks
+const sanitizeHtml = (html) => {
+    if (!html) return '';
+
+    // Create a temporary element to parse HTML
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+
+    // Remove all script tags and event handlers
+    const scripts = doc.querySelectorAll('script, iframe, object, embed');
+    scripts.forEach(el => el.remove());
+
+    // Remove event handlers from all elements
+    const allElements = doc.querySelectorAll('*');
+    allElements.forEach(el => {
+        const attrs = el.attributes;
+        for (let i = attrs.length - 1; i >= 0; i--) {
+            const attrName = attrs[i].name.toLowerCase();
+            if (attrName.startsWith('on') || attrName === 'javascript:') {
+                el.removeAttribute(attrs[i].name);
+            }
+        }
+    });
+
+    return doc.body.innerHTML;
+};
 
 const Edit = ({ attributes, setAttributes }) => {
     const {
@@ -39,7 +66,8 @@ const Edit = ({ attributes, setAttributes }) => {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                setPreview(data.data.html);
+                // Sanitize HTML to prevent XSS
+                setPreview(sanitizeHtml(data.data.html));
             }
             setLoading(false);
         })
@@ -47,34 +75,6 @@ const Edit = ({ attributes, setAttributes }) => {
             setLoading(false);
         });
     }, [maturity, format, showChange, decimalPlaces, theme]);
-
-    // Build shortcode string from attributes
-    const buildShortcode = (attrs) => {
-        let shortcode = '[uk_yield_rates';
-
-        if (attrs.maturity !== 'all') {
-            shortcode += ` maturity="${attrs.maturity}"`;
-        }
-
-        if (attrs.format !== 'inline') {
-            shortcode += ` format="${attrs.format}"`;
-        }
-
-        if (!attrs.showChange) {
-            shortcode += ` show_change="no"`;
-        }
-
-        if (attrs.decimalPlaces !== '2') {
-            shortcode += ` decimal="${attrs.decimalPlaces}"`;
-        }
-
-        if (attrs.theme !== 'light') {
-            shortcode += ` theme="${attrs.theme}"`;
-        }
-
-        shortcode += ']';
-        return shortcode;
-    };
 
     return (
         <div {...blockProps}>

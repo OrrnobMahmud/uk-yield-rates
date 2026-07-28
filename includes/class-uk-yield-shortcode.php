@@ -82,26 +82,29 @@ class UK_Yield_Shortcode {
         // Determine format
         $format = $atts['inline'] === 'yes' ? 'inline' : $atts['format'];
 
+        // Build data attributes for auto-refresh
+        $data_attributes = ' data-uk-yield-rates data-maturity="' . esc_attr($atts['maturity']) . '" data-format="' . esc_attr($format) . '"';
+
         // Render based on format
         switch ($format) {
             case 'inline':
-                return $this->render_inline($yields, $atts, $data);
+                return $this->render_inline($yields, $atts, $data, $data_attributes);
             case 'sidebar':
-                return $this->render_sidebar($yields, $atts, $data);
+                return $this->render_sidebar($yields, $atts, $data, $data_attributes);
             case 'table':
-                return $this->render_table($yields, $atts, $data);
+                return $this->render_table($yields, $atts, $data, $data_attributes);
             case 'compact':
-                return $this->render_compact($yields, $atts, $data);
+                return $this->render_compact($yields, $atts, $data, $data_attributes);
             default:
-                return $this->render_inline($yields, $atts, $data);
+                return $this->render_inline($yields, $atts, $data, $data_attributes);
         }
     }
 
     /**
      * Render inline format (for paragraphs)
      */
-    private function render_inline($yields, $atts, $data) {
-        $html = '<span class="uk-yield-inline" data-uk-yield-rates>';
+    private function render_inline($yields, $atts, $data, $data_attributes) {
+        $html = '<span class="uk-yield-inline"' . $data_attributes . '>';
 
         $decimal = intval($atts['decimal']);
         $first = true;
@@ -144,8 +147,8 @@ class UK_Yield_Shortcode {
     /**
      * Render sidebar format (compact widget)
      */
-    private function render_sidebar($yields, $atts, $data) {
-        $html = '<div class="uk-yield-sidebar" data-uk-yield-rates>';
+    private function render_sidebar($yields, $atts, $data, $data_attributes) {
+        $html = '<div class="uk-yield-sidebar"' . $data_attributes . '>';
         $html .= '<div class="uk-yield-sidebar-header">';
         $html .= '<h3 class="uk-yield-sidebar-title">' . esc_html__('UK Gilt Yields', 'uk-yield-rates') . '</h3>';
         $html .= '</div>';
@@ -189,8 +192,8 @@ class UK_Yield_Shortcode {
     /**
      * Render table format
      */
-    private function render_table($yields, $atts, $data) {
-        $html = '<div class="uk-yield-table-wrapper" data-uk-yield-rates>';
+    private function render_table($yields, $atts, $data, $data_attributes) {
+        $html = '<div class="uk-yield-table-wrapper"' . $data_attributes . '>';
         $html .= '<table class="uk-yield-table">';
         $html .= '<thead>';
         $html .= '<tr>';
@@ -256,8 +259,8 @@ class UK_Yield_Shortcode {
     /**
      * Render compact format (single line)
      */
-    private function render_compact($yields, $atts, $data) {
-        $html = '<span class="uk-yield-compact" data-uk-yield-rates>';
+    private function render_compact($yields, $atts, $data, $data_attributes) {
+        $html = '<span class="uk-yield-compact"' . $data_attributes . '>';
 
         $decimal = intval($atts['decimal']);
         $parts = [];

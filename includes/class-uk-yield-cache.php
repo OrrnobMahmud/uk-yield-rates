@@ -93,11 +93,6 @@ class UK_Yield_Cache {
     private function get_cache_duration() {
         $duration = get_option('uk_yield_rates_cache_duration', 1);
 
-        // Check if it's a weekend (longer cache)
-        if (in_array(current_time('w'), [0, 6])) {
-            return 24; // 24 hours on weekends
-        }
-
         return max(1, intval($duration));
     }
 

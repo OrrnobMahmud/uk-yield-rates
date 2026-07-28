@@ -56,7 +56,7 @@
                 container.classList.remove('uk-yield-loading');
             };
 
-            xhr.send('action=uk_yield_refresh&nonce=' + ukYieldRates.nonce);
+            xhr.send('action=uk_yield_refresh&nonce=' + ukYieldRates.nonce + '&maturity=' + encodeURIComponent(maturity) + '&format=' + encodeURIComponent(format));
         });
     }
 
