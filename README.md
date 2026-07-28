@@ -144,26 +144,6 @@ Portfolio context:
 4. Go to **Settings > UK Yield Rates** and enter current yield rates
 5. Add shortcodes to your pages and posts
 
-## Development
-
-### Prerequisites
-
-- Node.js 16+
-- npm or yarn
-
-### Setup
-
-```bash
-# Install dependencies
-npm install
-
-# Build Gutenberg block
-npm run build
-
-# Development mode with watch
-npm run start
-```
-
 ## Requirements
 
 - WordPress 5.0+
@@ -173,6 +153,6 @@ npm run start
 
 GPL v2 or later - see [LICENSE](LICENSE) for details
 
-## Support
+## Author
 
-For support and documentation, visit [Orrnob Mahmud Local SEO Strategist](https://orrnobmahmud.com)
+[Orrnob Mahmud Local SEO Strategist](https://orrnobmahmud.com)
