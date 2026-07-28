@@ -19,11 +19,14 @@ jQuery(document).ready(function($) {
 
         // Hide all sections first
         $('#uk-yield-manual-entry').hide();
+        $('#uk-yield-boe-custom-settings').hide();
         $('#uk-yield-fred-settings').hide();
 
         // Show relevant section
         if (source === 'manual') {
             $('#uk-yield-manual-entry').show();
+        } else if (source === 'boe_custom') {
+            $('#uk-yield-boe-custom-settings').show();
         } else if (source === 'fred') {
             $('#uk-yield-fred-settings').show();
         } else if (source === 'auto') {

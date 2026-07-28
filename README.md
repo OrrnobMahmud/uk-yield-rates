@@ -5,7 +5,8 @@ A WordPress plugin to display UK government bond (gilt) yield rates using shortc
 ## Features
 
 - **Manual Data Entry** - Most reliable method (FREE)
-- **API Options** - FRED API (free tier) or Apify scraper (paid ~$0.40/month)
+- **BoE Custom Endpoint** - Free with Cloudflare/Vercel (recommended free auto option)
+- **FRED API** - Free tier available
 - **Multiple Display Formats** - Inline, sidebar widget, table, and compact layouts
 - **Gutenberg Block** - Visual editor with live preview
 - **Shortcode Support** - Works with classic editor and page builders
@@ -20,13 +21,21 @@ A WordPress plugin to display UK government bond (gilt) yield rates using shortc
 ✅ **Easy maintenance** - update once weekly  
 ✅ **Works immediately** - no setup required  
 
-### Option B: FRED API (FREE tier)
+### Option B: BoE Custom Endpoint (FREE - Best Free Auto Option)
+✅ **Official Bank of England data**  
+✅ **Free** - no API keys or costs  
+✅ **Automatic daily updates**  
+✅ **You control the data source**  
+⚠️ Requires 30 minutes setup  
+⚠️ Need to deploy a small script  
+
+### Option C: FRED API (FREE tier)
 ✅ Free API key from Federal Reserve  
 ✅ UK gilt yield data available  
 ⚠️ Limited free requests per day  
 ⚠️ Requires API key setup  
 
-### Option C: Apify Scraper (~$0.40/month)
+### Option D: Apify Scraper (~$0.40/month)
 ✅ Automated data fetching  
 ✅ Uses official Bank of England data  
 ⚠️ Costs $4.98 per 1,000 results  
@@ -43,7 +52,18 @@ A WordPress plugin to display UK government bond (gilt) yield rates using shortc
 5. Click "Save Changes"
 6. Update when rates change (set a weekly reminder)
 
-### Option B: Automatic Updates with FRED API
+### Option B: BoE Custom Endpoint (Best Free Auto Option)
+
+1. Deploy a small script to Cloudflare Workers, Vercel, or Netlify (all free tiers)
+2. The script fetches BoE CSV daily and parses yield data
+3. Exposes a JSON endpoint like: `https://your-api.workers.dev/yields.json`
+4. Go to **Settings > UK Yield Rates** in WordPress admin
+5. Select "BoE Custom Endpoint" as data source
+6. Enter your endpoint URL and click "Save Changes"
+
+See the admin settings page for sample Cloudflare Worker code and expected JSON format.
+
+### Option C: Automatic Updates with FRED API
 
 1. Go to https://fred.stlouisfed.org/docs/api/api_key.html
 2. Sign up for a free API key

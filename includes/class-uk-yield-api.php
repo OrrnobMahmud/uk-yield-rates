@@ -19,6 +19,7 @@ class UK_Yield_API {
      * API endpoints
      */
     private $fred_base_url = 'https://api.stlouisfed.org/fred/series/observations';
+    private $boe_custom_base_url = ''; // Set via admin settings
 
     /**
      * FRED series IDs for UK gilt yields (backup)
@@ -53,7 +54,10 @@ class UK_Yield_API {
         $api_source = get_option('uk_yield_rates_api_source', 'manual');
 
         // Try configured source first
-        if ($api_source === 'fred') {
+        if ($api_source === 'boe_custom') {
+            $data = $this->fetch_from_boe_custom();
+            if ($data) return $data;
+        } elseif ($api_source === 'fred') {
             $data = $this->fetch_from_fred();
             if ($data) return $data;
         } elseif ($api_source === 'manual') {
@@ -62,6 +66,9 @@ class UK_Yield_API {
         }
 
         // Auto-failover: try all APIs
+        $data = $this->fetch_from_boe_custom();
+        if ($data) return $data;
+
         $data = $this->fetch_from_fred();
         if ($data) return $data;
 
@@ -71,6 +78,56 @@ class UK_Yield_API {
 
         // All sources failed
         return false;
+    }
+
+    /**
+     * Fetch from custom BoE endpoint (user-hosted API)
+     */
+    private function fetch_from_boe_custom() {
+        $endpoint_url = get_option('uk_yield_rates_boe_custom_endpoint', '');
+
+        if (empty($endpoint_url)) {
+            error_log('UK Yield Rates: Custom BoE endpoint not configured');
+            return false;
+        }
+
+        $response = wp_remote_get($endpoint_url, [
+            'timeout' => 15,
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+        ]);
+
+        if (is_wp_error($response)) {
+            error_log('UK Yield Rates: Custom BoE endpoint error - ' . $response->get_error_message());
+            return false;
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+
+        if (!$data || !isset($data['yields']) || !is_array($data['yields'])) {
+            error_log('UK Yield Rates: Invalid response from custom BoE endpoint');
+            return false;
+        }
+
+        $yields = [];
+        foreach ($data['yields'] as $maturity => $yield_data) {
+            if (isset($yield_data['yield'])) {
+                $yields[$maturity] = [
+                    'maturity' => $maturity,
+                    'yield' => floatval($yield_data['yield']),
+                    'change' => floatval($yield_data['change'] ?? 0),
+                    'date' => $yield_data['date'] ?? date('Y-m-d'),
+                ];
+            }
+        }
+
+        if (empty($yields)) {
+            return false;
+        }
+
+        return $this->format_yield_data($yields, 'boe_custom');
     }
 
     /**

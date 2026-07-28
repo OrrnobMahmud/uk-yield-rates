@@ -55,6 +55,7 @@ $cache_info = $cache->get_cache_info();
                             <td>
                                 <select name="uk_yield_rates_api_source" id="uk-yield-data-source">
                                     <option value="manual" <?php selected($api_source, 'manual'); ?>><?php echo esc_html__('Manual Entry (Recommended - FREE & Reliable)', 'uk-yield-rates'); ?></option>
+                                    <option value="boe_custom" <?php selected($api_source, 'boe_custom'); ?>><?php echo esc_html__('BoE Custom Endpoint (Free - requires setup)', 'uk-yield-rates'); ?></option>
                                     <option value="fred" <?php selected($api_source, 'fred'); ?>><?php echo esc_html__('FRED API (Free tier available)', 'uk-yield-rates'); ?></option>
                                     <option value="auto" <?php selected($api_source, 'auto'); ?>><?php echo esc_html__('Auto (try all sources)', 'uk-yield-rates'); ?></option>
                                 </select>
@@ -116,6 +117,73 @@ $cache_info = $cache->get_cache_info();
                         <p class="description">
                             <strong><?php echo esc_html__('Quick Update Tip:', 'uk-yield-rates'); ?></strong>
                             <?php echo esc_html__('Check https://www.bankofengland.co.uk/statistics/yield-curves for current rates, then enter them above. The plugin will automatically display them across all your pages!', 'uk-yield-rates'); ?>
+                        </p>
+                    </div>
+
+                    <!-- BoE Custom Endpoint Section -->
+                    <div id="uk-yield-boe-custom-settings" class="uk-yield-boe-custom-section" style="display: <?php echo ($api_source === 'boe_custom' || $api_source === 'auto') ? 'block' : 'none'; ?>;">
+                        <h3><?php echo esc_html__('Bank of England Custom Endpoint', 'uk-yield-rates'); ?></h3>
+                        <p class="description">
+                            <strong><?php echo esc_html__('Recommended free option with some setup:', 'uk-yield-rates'); ?></strong>
+                            <?php echo esc_html__('The Bank of England publishes gilt yield data as CSV but has no API. You can host a simple script that fetches the CSV and exposes it as JSON via a free cloud service.', 'uk-yield-rates'); ?>
+                        </p>
+
+                        <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 6px; padding: 15px; margin: 15px 0;">
+                            <h4 style="margin-top: 0; color: #0369a1;"><?php echo esc_html__('How it works:', 'uk-yield-rates'); ?></h4>
+                            <ol style="margin: 10px 0; padding-left: 20px;">
+                                <li><?php echo esc_html__('Deploy a small script to Cloudflare Workers, Vercel, or Netlify (all free tiers)', 'uk-yield-rates'); ?></li>
+                                <li><?php echo esc_html__('The script fetches BoE CSV daily and parses yield data', 'uk-yield-rates'); ?></li>
+                                <li><?php echo esc_html__('Exposes a JSON endpoint like: https://your-api.workers.dev/yields.json', 'uk-yield-rates'); ?></li>
+                                <li><?php echo esc_html__('Enter that URL below and the plugin auto-fetches rates', 'uk-yield-rates'); ?></li>
+                            </ol>
+                        </div>
+
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><?php echo esc_html__('Endpoint URL', 'uk-yield-rates'); ?></th>
+                                <td>
+                                    <input type="url" name="uk_yield_rates_boe_custom_endpoint" value="<?php echo esc_attr(get_option('uk_yield_rates_boe_custom_endpoint', '')); ?>" class="regular-text" placeholder="https://your-api.workers.dev/yields.json">
+                                    <p class="description"><?php echo esc_html__('The URL of your custom BoE yield data endpoint.', 'uk-yield-rates'); ?></p>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <p class="description">
+                            <strong><?php echo esc_html__('Expected JSON format:', 'uk-yield-rates'); ?></strong>
+                        </p>
+                        <pre style="background: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 6px; overflow-x: auto; font-size: 13px;">{
+  "yields": {
+    "2": {"yield": 4.25, "change": 0.02, "date": "2026-07-28"},
+    "5": {"yield": 4.15, "change": -0.01, "date": "2026-07-28"},
+    "10": {"yield": 4.05, "change": 0.00, "date": "2026-07-28"},
+    "20": {"yield": 4.35, "change": 0.03, "date": "2026-07-28"},
+    "30": {"yield": 4.45, "change": -0.02, "date": "2026-07-28"}
+  }
+}</pre>
+
+                        <p class="description">
+                            <strong><?php echo esc_html__('Sample Cloudflare Worker code:', 'uk-yield-rates'); ?></strong>
+                        </p>
+                        <pre style="background: #1e293b; color: #e2e8f0; padding: 15px; border-radius: 6px; overflow-x: auto; font-size: 12px;">export default {
+  async fetch(request, env, ctx) {
+    const csvUrl = 'https://www.bankofengland.co.uk/boeapps/database/_iad-downloadseries.asp?SeriesCodes=IUDM421,IUDM423,IUDM425,IUDM427,IUDM429&CSVF=TN&UsingCodes=Y&Period=Daily';
+    const response = await fetch(csvUrl);
+    const csv = await response.text();
+    // Parse CSV and extract yields...
+    return new Response(JSON.stringify({yields: {...}}), {
+      headers: {'Content-Type': 'application/json'}
+    });
+  }
+};</pre>
+
+                        <p class="description">
+                            <strong><?php echo esc_html__('Benefits:', 'uk-yield-rates'); ?></strong>
+                            <ul>
+                                <li><?php echo esc_html__('Free - no API keys or costs', 'uk-yield-rates'); ?></li>
+                                <li><?php echo esc_html__('Official Bank of England data', 'uk-yield-rates'); ?></li>
+                                <li><?php echo esc_html__('Automatic daily updates', 'uk-yield-rates'); ?></li>
+                                <li><?php echo esc_html__('You control the data source', 'uk-yield-rates'); ?></li>
+                            </ul>
                         </p>
                     </div>
 
