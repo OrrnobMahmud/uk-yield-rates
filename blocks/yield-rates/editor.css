@@ -32,3 +32,154 @@
 .uk-yield-block-placeholder p {
     margin: 0;
 }
+
+/* ============================================
+   THEME PREVIEW STYLES
+   ============================================ */
+
+/* Light theme (default) */
+.uk-yield-theme-light {
+    background: #fff;
+    color: #1f2937;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+/* Dark theme preview */
+.uk-yield-theme-dark {
+    background: #1f2937;
+    color: #f9fafb;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #374151;
+}
+
+.uk-yield-theme-dark .uk-yield-sidebar {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.uk-yield-theme-dark .uk-yield-sidebar-header {
+    background: #374151;
+}
+
+.uk-yield-theme-dark .uk-yield-sidebar-title {
+    color: #f9fafb;
+}
+
+.uk-yield-theme-dark .uk-yield-sidebar-content {
+    background: #1f2937;
+}
+
+.uk-yield-theme-dark .uk-yield-sidebar-row {
+    border-color: #374151;
+}
+
+.uk-yield-theme-dark .uk-yield-sidebar-maturity {
+    color: #d1d5db;
+}
+
+.uk-yield-theme-dark .uk-yield-sidebar-yield {
+    color: #f9fafb;
+}
+
+.uk-yield-theme-dark .uk-yield-sidebar-footer {
+    background: #111827;
+    color: #9ca3af;
+}
+
+.uk-yield-theme-dark .uk-yield-table th {
+    background: #374151;
+}
+
+.uk-yield-theme-dark .uk-yield-table td {
+    border-color: #374151;
+    color: #e5e7eb;
+}
+
+.uk-yield-theme-dark .uk-yield-table tbody tr:nth-child(even) {
+    background: #1f2937;
+}
+
+.uk-yield-theme-dark .uk-yield-table tbody tr:hover {
+    background: #374151;
+}
+
+/* ============================================
+   PREVIEW OPTIONS STYLES
+   ============================================ */
+
+.uk-yield-preview-theme-info {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 4px;
+    padding: 12px;
+    margin-top: 8px;
+}
+
+.uk-yield-preview-theme-info p {
+    margin: 4px 0;
+}
+
+.uk-yield-preview-theme-info .description {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.uk-yield-preview-shortcode {
+    background: #2d3748;
+    color: #e2e8f0;
+    padding: 12px;
+    border-radius: 4px;
+    margin-top: 12px;
+}
+
+.uk-yield-preview-shortcode strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #fff;
+}
+
+.uk-yield-shortcode-display {
+    display: block;
+    background: #1a202c;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    margin-bottom: 8px;
+    word-break: break-all;
+}
+
+.uk-yield-preview-shortcode .components-button {
+    margin-top: 4px;
+}
+
+/* ============================================
+   INSPECTOR CONTROLS ENHANCEMENTS
+   ============================================ */
+
+/* Better spacing for panel rows */
+.components-panel__body .components-base-control {
+    margin-bottom: 16px;
+}
+
+/* Help text styling */
+.components-base-control__help {
+    font-size: 12px;
+    color: #6b7280;
+    font-style: italic;
+    margin-top: 4px;
+}
+
+/* Select control improvements */
+.components-select-control__input {
+    font-size: 13px;
+}
+
+/* Toggle control improvements */
+.components-toggle-control .components-base-control__field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

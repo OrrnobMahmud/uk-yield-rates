@@ -1,50 +1,82 @@
 /* UK Yield Rates Frontend Styles */
 
+/* ============================================
+   TEXT STYLE INHERITANCE
+   All yield elements inherit text styles from parent
+   context (headers, bold text, links, etc.)
+   ============================================ */
+
 /* Base styles */
 .uk-yield-inline,
 .uk-yield-compact {
     display: inline;
     white-space: nowrap;
+    /* Inherit ALL text styles from parent context */
+    font: inherit;
+    color: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+    font-style: inherit;
+    letter-spacing: inherit;
+    line-height: inherit;
+    text-decoration: inherit;
+    text-transform: inherit;
 }
 
 .uk-yield-item {
     margin-right: 5px;
+    /* Inherit text styles */
+    font: inherit;
+    color: inherit;
 }
 
 .uk-yield-label {
-    font-weight: 500;
+    /* Inherit font weight from parent (no hardcoded 500) */
+    font-weight: inherit;
+    color: inherit;
 }
 
 .uk-yield-value {
-    font-weight: 600;
+    /* Inherit font weight from parent (no hardcoded 600) */
+    font-weight: inherit;
+    color: inherit;
 }
 
 /* Change indicators */
 .uk-yield-change {
-    font-size: 0.9em;
+    /* Inherit base font size relative to parent */
+    font-size: inherit;
+    font-weight: inherit;
+    font-style: inherit;
+    /* Override only color for semantic meaning */
 }
 
 .uk-yield-change.positive {
-    color: #16a34a;
+    color: #16a34a !important;
 }
 
 .uk-yield-change.negative {
-    color: #dc2626;
+    color: #dc2626 !important;
 }
 
 .uk-yield-change.neutral {
-    color: #6b7280;
+    color: #6b7280 !important;
 }
 
 /* Updated timestamp */
 .uk-yield-updated {
-    font-size: 0.85em;
-    color: #6b7280;
-    font-style: italic;
+    /* Inherit font properties from parent */
+    font-size: inherit;
+    font-weight: inherit;
+    font-style: inherit;
+    /* Slightly muted but inherit parent color with adjustment */
+    opacity: 0.75;
 }
 
 .uk-yield-updated-label {
-    font-style: normal;
+    /* Inherit from parent */
+    font-style: inherit;
+    font-weight: inherit;
 }
 
 /* Sidebar Widget */
@@ -55,6 +87,8 @@
     padding: 0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     max-width: 280px;
+    /* Inherit font family from parent */
+    font-family: inherit;
 }
 
 .uk-yield-sidebar-header {
@@ -68,6 +102,7 @@
     margin: 0;
     font-size: 14px;
     font-weight: 600;
+    color: inherit;
 }
 
 .uk-yield-sidebar-content {
@@ -89,17 +124,22 @@
 .uk-yield-sidebar-maturity {
     font-size: 13px;
     color: #4b5563;
+    /* Inherit font weight from context */
+    font-weight: inherit;
 }
 
 .uk-yield-sidebar-yield {
     font-size: 14px;
     font-weight: 600;
     color: #1f2937;
+    /* Inherit font family */
+    font-family: inherit;
 }
 
 .uk-yield-sidebar-change {
     font-size: 12px;
     margin-left: 8px;
+    font-weight: inherit;
 }
 
 .uk-yield-sidebar-footer {
@@ -109,18 +149,25 @@
     font-size: 12px;
     color: #6b7280;
     text-align: center;
+    font-style: italic;
 }
 
 /* Table Layout */
 .uk-yield-table-wrapper {
     overflow-x: auto;
     margin: 15px 0;
+    /* Inherit font family from parent */
+    font-family: inherit;
 }
 
 .uk-yield-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
+    font-size: inherit;
+    /* Inherit font properties */
+    font-weight: inherit;
+    font-style: inherit;
+    line-height: inherit;
 }
 
 .uk-yield-table th {
@@ -134,6 +181,11 @@
 .uk-yield-table td {
     padding: 10px 15px;
     border-bottom: 1px solid #e5e7eb;
+    /* Inherit text styles */
+    font-size: inherit;
+    font-weight: inherit;
+    font-style: inherit;
+    color: inherit;
 }
 
 .uk-yield-table tbody tr:nth-child(even) {
@@ -165,30 +217,31 @@
 }
 
 .uk-yield-td-yield {
-    font-weight: 600;
-    font-size: 15px;
+    font-weight: inherit;
+    font-size: inherit;
 }
 
 .uk-yield-td-change.positive,
 .uk-yield-td-status.positive {
-    color: #16a34a;
+    color: #16a34a !important;
 }
 
 .uk-yield-td-change.negative,
 .uk-yield-td-status.negative {
-    color: #dc2626;
+    color: #dc2626 !important;
 }
 
 .uk-yield-td-change.neutral,
 .uk-yield-td-status.neutral {
-    color: #6b7280;
+    color: #6b7280 !important;
 }
 
 .uk-yield-table-footer {
     padding: 10px 0;
-    font-size: 12px;
+    font-size: inherit;
     color: #6b7280;
     text-align: right;
+    font-style: italic;
 }
 
 /* Dark Theme */
@@ -250,10 +303,178 @@
     color: #dc2626;
     padding: 5px 10px;
     border-radius: 4px;
-    font-size: 13px;
+    font-size: inherit;
+    font-weight: inherit;
 }
 
-/* Responsive */
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+/* Yield value animations */
+.uk-yield-animated {
+    transition: all 0.3s ease;
+}
+
+.uk-yield-changing {
+    animation: uk-yield-pulse 0.3s ease;
+}
+
+.uk-yield-changed {
+    animation: uk-yield-flash 0.8s ease;
+}
+
+@keyframes uk-yield-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes uk-yield-flash {
+    0% { background-color: transparent; }
+    25% { background-color: rgba(59, 130, 246, 0.2); }
+    50% { background-color: transparent; }
+    75% { background-color: rgba(59, 130, 246, 0.1); }
+    100% { background-color: transparent; }
+}
+
+/* Positive change animation */
+.uk-yield-change.positive {
+    animation: uk-yield-positive-flash 0.5s ease;
+}
+
+@keyframes uk-yield-positive-flash {
+    0% { color: inherit; }
+    50% { color: #16a34a; }
+    100% { color: #16a34a; }
+}
+
+/* Negative change animation */
+.uk-yield-change.negative {
+    animation: uk-yield-negative-flash 0.5s ease;
+}
+
+@keyframes uk-yield-negative-flash {
+    0% { color: inherit; }
+    50% { color: #dc2626; }
+    100% { color: #dc2626; }
+}
+
+/* ============================================
+   LOADING STATES
+   ============================================ */
+
+.uk-yield-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.uk-yield-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    border-radius: inherit;
+}
+
+.uk-yield-loading-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid #e5e7eb;
+    border-top-color: #1e40af;
+    border-radius: 50%;
+    animation: uk-yield-spin 1s linear infinite;
+}
+
+@keyframes uk-yield-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Loading text */
+.uk-yield-loading-text {
+    opacity: 0.5;
+    font-style: italic;
+}
+
+/* ============================================
+   TOOLTIPS
+   ============================================ */
+
+.uk-yield-tooltip {
+    position: relative;
+    cursor: help;
+}
+
+.uk-yield-tooltip:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1f2937;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+    margin-bottom: 8px;
+    pointer-events: none;
+    animation: uk-yield-tooltip-fade 0.2s ease;
+}
+
+.uk-yield-tooltip:hover::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #1f2937;
+    margin-bottom: -4px;
+    pointer-events: none;
+}
+
+@keyframes uk-yield-tooltip-fade {
+    0% { opacity: 0; transform: translateX(-50%) translateY(4px); }
+    100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Tooltip for compact format */
+.uk-yield-compact.uk-yield-tooltip:hover::after {
+    white-space: normal;
+    max-width: 300px;
+    text-align: left;
+}
+
+/* ============================================
+   HOVER EFFECTS
+   ============================================ */
+
+.uk-yield-item:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.uk-yield-sidebar-row:hover {
+    background-color: #f9fafb;
+}
+
+.uk-yield-table tbody tr:hover .uk-yield-td-yield {
+    color: #1e40af;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
 @media (max-width: 768px) {
     .uk-yield-table th,
     .uk-yield-table td {
