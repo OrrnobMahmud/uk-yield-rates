@@ -430,8 +430,8 @@ $cache_info = $cache->get_cache_info();
 
             <div class="uk-yield-support-section">
                 <h3><?php echo esc_html__('📚 Documentation', 'uk-yield-rates'); ?></h3>
-                <p><?php echo esc_html__('Visit our GitHub wiki for comprehensive documentation.', 'uk-yield-rates'); ?></p>
-                <a href="https://github.com/OrrnobMahmud/uk-yield-rates/wiki" target="_blank" class="button button-secondary">
+                <p><?php echo esc_html__('View the README for comprehensive documentation.', 'uk-yield-rates'); ?></p>
+                <a href="https://github.com/OrrnobMahmud/uk-yield-rates#readme" target="_blank" class="button button-secondary">
                     <?php echo esc_html__('View Documentation', 'uk-yield-rates'); ?>
                 </a>
             </div>
