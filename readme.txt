@@ -17,7 +17,7 @@ UK Yield Rates Live is a WordPress plugin that displays real-time UK government 
 
 **Features:**
 
-* **Dual API Support** - Automatically fetches data from Bank of England and FRED APIs with failover
+* **Multiple Data Sources** - Manual entry (recommended), BoE custom endpoint, or FRED API
 * **Multiple Display Formats** - Inline, sidebar widget, table, and compact layouts
 * **Gutenberg Block** - Visual editor with live preview
 * **Shortcode Support** - Works with classic editor and page builders
@@ -75,7 +75,7 @@ Yes! Use these attributes:
 
 = Do I need an API key? =
 
-The plugin works with the Bank of England API without a key. If you want to use the FRED API as a backup, you'll need a free API key from https://fred.stlouisfed.org/docs/api/api_key.html
+No API key is required. The recommended method is **Manual Entry** - just enter yields from the Bank of England website once a week. For automatic updates, you can set up a free BoE Custom Endpoint (Cloudflare Workers or Vercel) or use the free FRED API.
 
 = How often is the data updated? =
 
@@ -102,8 +102,9 @@ Yes. The plugin is fully internationalized and ready for translation.
 
 = 1.0.0 =
 * Initial release
-* Bank of England API integration
-* FRED API integration with auto-failover
+* Manual yield rate entry (recommended)
+* BoE Custom Endpoint for automatic updates
+* FRED API integration
 * Multiple display formats (inline, sidebar, table, compact)
 * Gutenberg block with live preview
 * Admin settings page
@@ -115,3 +116,7 @@ Yes. The plugin is fully internationalized and ready for translation.
 
 = 1.0.0 =
 Initial release of UK Yield Rates Live plugin.
+
+== Author ==
+
+[Orrnob Mahmud Local SEO Strategist](https://orrnobmahmud.com)
