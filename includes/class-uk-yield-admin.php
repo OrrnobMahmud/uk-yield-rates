@@ -99,6 +99,22 @@ class UK_Yield_Admin {
         wp_localize_script('uk_yield_admin', 'ukYieldAdmin', [
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('uk_yield_rates_nonce'),
+            'pluginVersion' => UK_YIELD_RATES_VERSION,
+            'wpVersion' => get_bloginfo('version'),
+            'phpVersion' => phpversion(),
+            'theme' => wp_get_theme()->get('Name'),
+            'githubRepo' => 'https://github.com/OrrnobMahmud/uk-yield-rates',
+            'i18n' => [
+                'reportBug' => __('Report a Bug', 'uk-yield-rates'),
+                'requestFeature' => __('Request a Feature', 'uk-yield-rates'),
+                'bugTitlePlaceholder' => __('Brief description of the issue', 'uk-yield-rates'),
+                'bugDescPlaceholder' => __('Detailed description of the bug...', 'uk-yield-rates'),
+                'featureTitlePlaceholder' => __('Feature name', 'uk-yield-rates'),
+                'featureDescPlaceholder' => __('Describe the feature you\'d like...', 'uk-yield-rates'),
+                'enterTitle' => __('Please enter an issue title.', 'uk-yield-rates'),
+                'enterDescription' => __('Please provide a description.', 'uk-yield-rates'),
+                'issueOpened' => __('✓ GitHub issue page opened! Please submit the issue there.', 'uk-yield-rates'),
+            ],
         ]);
     }
 

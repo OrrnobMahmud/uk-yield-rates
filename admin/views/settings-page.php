@@ -407,4 +407,89 @@ $cache_info = $cache->get_cache_info();
             </ul>
         </div>
     </div>
+
+    <div class="uk-yield-support">
+        <h2><?php echo esc_html__('Support & Feedback', 'uk-yield-rates'); ?></h2>
+
+        <div class="uk-yield-support-content">
+            <div class="uk-yield-support-section">
+                <h3><?php echo esc_html__('🐛 Report a Bug', 'uk-yield-rates'); ?></h3>
+                <p><?php echo esc_html__('Found a bug? Help us improve the plugin by reporting it on GitHub.', 'uk-yield-rates'); ?></p>
+                <button type="button" class="button button-secondary uk-yield-report-bug" id="uk-yield-report-bug">
+                    <?php echo esc_html__('Report Bug on GitHub', 'uk-yield-rates'); ?>
+                </button>
+            </div>
+
+            <div class="uk-yield-support-section">
+                <h3><?php echo esc_html__('💡 Feature Request', 'uk-yield-rates'); ?></h3>
+                <p><?php echo esc_html__('Have an idea for improvement? Suggest a new feature on GitHub.', 'uk-yield-rates'); ?></p>
+                <button type="button" class="button button-secondary uk-yield-report-bug" id="uk-yield-request-feature">
+                    <?php echo esc_html__('Request Feature on GitHub', 'uk-yield-rates'); ?>
+                </button>
+            </div>
+
+            <div class="uk-yield-support-section">
+                <h3><?php echo esc_html__('📚 Documentation', 'uk-yield-rates'); ?></h3>
+                <p><?php echo esc_html__('Visit our GitHub wiki for comprehensive documentation.', 'uk-yield-rates'); ?></p>
+                <a href="https://github.com/OrrnobMahmud/uk-yield-rates/wiki" target="_blank" class="button button-secondary">
+                    <?php echo esc_html__('View Documentation', 'uk-yield-rates'); ?>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bug Report Modal -->
+    <div id="uk-yield-bug-report-modal" class="uk-yield-modal" style="display: none;">
+        <div class="uk-yield-modal-content">
+            <div class="uk-yield-modal-header">
+                <h2 id="uk-yield-modal-title"><?php echo esc_html__('Report a Bug', 'uk-yield-rates'); ?></h2>
+                <button type="button" class="uk-yield-modal-close" id="uk-yield-modal-close">&times;</button>
+            </div>
+            <div class="uk-yield-modal-body">
+                <div class="uk-yield-form-group">
+                    <label for="uk-yield-bug-title"><?php echo esc_html__('Issue Title', 'uk-yield-rates'); ?></label>
+                    <input type="text" id="uk-yield-bug-title" class="regular-text" placeholder="<?php echo esc_attr__('Brief description of the issue', 'uk-yield-rates'); ?>">
+                    <p class="description"><?php echo esc_html__('A concise summary of the problem', 'uk-yield-rates'); ?></p>
+                </div>
+
+                <div class="uk-yield-form-group">
+                    <label for="uk-yield-bug-description"><?php echo esc_html__('Description', 'uk-yield-rates'); ?></label>
+                    <textarea id="uk-yield-bug-description" rows="8" class="large-text" placeholder="<?php echo esc_attr__('Detailed description of the bug...', 'uk-yield-rates'); ?>"></textarea>
+                    <p class="description"><?php echo esc_html__('Steps to reproduce, expected behavior, and what actually happened', 'uk-yield-rates'); ?></p>
+                </div>
+
+                <div class="uk-yield-form-group">
+                    <label for="uk-yield-bug-steps"><?php echo esc_html__('Steps to Reproduce', 'uk-yield-rates'); ?></label>
+                    <textarea id="uk-yield-bug-steps" rows="5" class="large-text" placeholder="1. Go to Settings > UK Yield Rates&#10;2. Select 'Manual Entry'&#10;3. Enter yield values&#10;4. Click Save Changes"></textarea>
+                </div>
+
+                <div class="uk-yield-form-group">
+                    <label for="uk-yield-bug-expected"><?php echo esc_html__('Expected Behavior', 'uk-yield-rates'); ?></label>
+                    <textarea id="uk-yield-bug-expected" rows="3" class="large-text" placeholder="<?php echo esc_attr__('What you expected to happen', 'uk-yield-rates'); ?>"></textarea>
+                </div>
+
+                <div class="uk-yield-form-group">
+                    <label><?php echo esc_html__('System Information (Auto-detected)', 'uk-yield-rates'); ?></label>
+                    <div class="uk-yield-system-info">
+                        <p><strong>Plugin Version:</strong> <?php echo UK_YIELD_RATES_VERSION; ?></p>
+                        <p><strong>WordPress Version:</strong> <?php echo esc_html(get_bloginfo('version')); ?></p>
+                        <p><strong>PHP Version:</strong> <?php echo esc_html(phpversion()); ?></p>
+                        <p><strong>Active Theme:</strong> <?php echo esc_html(wp_get_theme()->get('Name')); ?></p>
+                        <p><strong>Active Plugins:</strong> <?php echo esc_html(implode(', ', array_map(function($plugin) { return $plugin['Name']; }, get_plugins()))); ?></p>
+                    </div>
+                </div>
+
+                <div class="uk-yield-form-group">
+                    <label>
+                        <input type="checkbox" id="uk-yield-bug-include-system" checked>
+                        <?php echo esc_html__('Include system information in the report', 'uk-yield-rates'); ?>
+                    </label>
+                </div>
+            </div>
+            <div class="uk-yield-modal-footer">
+                <button type="button" class="button" id="uk-yield-modal-cancel"><?php echo esc_html__('Cancel', 'uk-yield-rates'); ?></button>
+                <button type="button" class="button button-primary" id="uk-yield-modal-submit"><?php echo esc_html__('Open GitHub Issue', 'uk-yield-rates'); ?></button>
+            </div>
+        </div>
+    </div>
 </div>
