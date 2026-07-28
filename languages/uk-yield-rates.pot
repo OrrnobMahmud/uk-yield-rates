@@ -1,9 +1,9 @@
-# Copyright (C) 2026 Your Name
+# Copyright (C) 2026 Orrnob Mahmud Local SEO Strategist
 # This file is distributed under the same license as the UK Yield Rates Live plugin.
 msgid ""
 msgstr ""
 "Project-Id-Version: UK Yield Rates Live 1.0.0\n"
-"Report-Msgid-Bugs-To: https://example.com/support\n"
+"Report-Msgid-Bugs-To: https://orrnobmahmud.com\n"
 "POT-Creation-Date: 2026-07-28 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"

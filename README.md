@@ -134,4 +134,4 @@ GPL v2 or later - see [LICENSE](LICENSE) for details
 
 ## Support
 
-For support and documentation, visit https://example.com/support
+For support and documentation, visit [Orrnob Mahmud Local SEO Strategist](https://orrnobmahmud.com)

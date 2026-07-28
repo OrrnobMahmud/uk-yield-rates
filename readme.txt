@@ -1,6 +1,6 @@
 === UK Yield Rates Live ===
-Contributors: yourname
-Donate link: https://example.com/donate
+Contributors: orrnobmahmud
+Donate link: https://orrnobmahmud.com
 Tags: yield rates, gilts, bonds, finance, uk
 Requires at least: 5.0
 Tested up to: 6.6
