@@ -165,4 +165,4 @@ Initial release of UK Yield Rates Live plugin.
 
 == Donate ==
 
-If you find this plugin useful, please consider [buying me a coffee](https://orrnobmahmud.com/donate) to support continued development.
+If you find this plugin useful, please consider [starring the GitHub repository](https://github.com/OrrnobMahmud/uk-yield-rates) to support continued development.

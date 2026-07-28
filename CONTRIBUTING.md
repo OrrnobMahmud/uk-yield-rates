@@ -84,7 +84,7 @@ Examples of unacceptable behavior include:
 
 ### 💡 Suggesting Features
 
-1. **Check existing discussions** - Search [GitHub Discussions](https://github.com/OrrnobMahmud/uk-yield-rates/discussions)
+1. **Check existing issues** - Search [GitHub Issues](https://github.com/OrrnobMahmud/uk-yield-rates/issues)
 2. **Use the feature request form** - Go to Settings > UK Yield Rates > Request Feature
 3. **Explain the use case** - Why is this feature needed?
 4. **Provide examples** - How would it work?
@@ -616,7 +616,7 @@ If you have questions about contributing:
 
 1. **Check the documentation** - [README.md](README.md)
 2. **Search existing issues** - [GitHub Issues](https://github.com/OrrnobMahmud/uk-yield-rates/issues)
-3. **Open a discussion** - [GitHub Discussions](https://github.com/OrrnobMahmud/uk-yield-rates/discussions)
+3. **Open an issue** - Ask a question via GitHub Issues
 4. **Contact the author** - [orrnobmahmud.com](https://orrnobmahmud.com)
 
 Thank you for contributing! 🎉

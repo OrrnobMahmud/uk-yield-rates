@@ -8,10 +8,9 @@
 
 **DO NOT** open a public GitHub issue for security vulnerabilities.
 
-Instead, please report security issues via one of these methods:
+Instead, please report security issues via GitHub's private vulnerability reporting:
 
-1. **Email**: Send details to [security@orrnobmahmud.com](mailto:security@orrnobmahmud.com)
-2. **GitHub Security Advisory**: Use [GitHub's private vulnerability reporting](https://github.com/OrrnobMahmud/uk-yield-rates/security/advisories/new)
+1. **GitHub Security Advisory**: Use [GitHub's private vulnerability reporting](https://github.com/OrrnobMahmud/uk-yield-rates/security/advisories/new)
 
 ### What to Include
 
@@ -423,7 +422,6 @@ find . -name "*.php" -exec php -l {} \;
 
 ### Security Team
 
-- **Email**: [security@orrnobmahmud.com](mailto:security@orrnobmahmud.com)
 - **GitHub**: [@OrrnobMahmud](https://github.com/OrrnobMahmud)
 
 ### Response Hours

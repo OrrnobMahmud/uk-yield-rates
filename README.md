@@ -1,14 +1,13 @@
 # UK Yield Rates Live
 
-[![WordPress Plugin Version](https://img.shields.io/wordpress/plugin/v/uk-yield-rates)](https://wordpress.org/plugins/uk-yield-rates/)
-[![WordPress Plugin Required Version](https://img.shields.io/wordpress/plugin/required-version/uk-yield-rates)](https://wordpress.org/plugins/uk-yield-rates/)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/OrrnobMahmud/uk-yield-rates)
 [![License](https://img.shields.io/badge/license-GPL%20v2%2B-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![PHP Version](https://img.shields.io/badge/php-7.4%2B-purple.svg)](https://php.net)
 
 A WordPress plugin to display UK government bond (gilt) yield rates using shortcodes and Gutenberg blocks. Perfect for estate agents, mortgage brokers, and financial advisors who need to show current yield rates in their website content.
 
-**Author:** [Orrnob Mahmud Local SEO Strategist](https://orrnobmahmud.com)  
-**Website:** [https://orrnobmahmud.com/uk-yield-rates](https://orrnobmahmud.com/uk-yield-rates)  
+**Author:** [Orrnob Mahmud](https://orrnobmahmud.com)  
+**Website:** [https://orrnobmahmud.com](https://orrnobmahmud.com)  
 **GitHub:** [https://github.com/OrrnobMahmud/uk-yield-rates](https://github.com/OrrnobMahmud/uk-yield-rates)
 
 ---
@@ -468,8 +467,8 @@ $output = apply_filters('uk_yield_rates_shortcode_output', $output, $atts);
 5. Submit on GitHub
 
 ### Documentation
-- [GitHub Wiki](https://github.com/OrrnobMahmud/uk-yield-rates/wiki)
-- [WordPress.org Plugin Page](https://wordpress.org/plugins/uk-yield-rates/)
+- This README
+- WordPress.org plugin page (coming soon)
 
 ---
 
@@ -544,10 +543,9 @@ GPL v2 or later - see [LICENSE](LICENSE) for details
 
 ## 👤 Author
 
-**Orrnob Mahmud Local SEO Strategist**
+**Orrnob Mahmud**
 - Website: [https://orrnobmahmud.com](https://orrnobmahmud.com)
 - GitHub: [https://github.com/OrrnobMahmud](https://github.com/OrrnobMahmud)
-- WordPress: [https://profiles.wordpress.org/orrnobmahmud](https://profiles.wordpress.org/orrnobmahmud)
 
 ---
 
@@ -567,5 +565,3 @@ To report security vulnerabilities, please see [SECURITY.md](SECURITY.md).
 
 If you find this plugin useful, please consider:
 - ⭐ [Starring the GitHub repository](https://github.com/OrrnobMahmud/uk-yield-rates)
-- ⭐ [Rating on WordPress.org](https://wordpress.org/plugins/uk-yield-rates/#reviews)
-- ☕ [Buying me a coffee](https://orrnobmahmud.com/donate)

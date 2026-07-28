@@ -214,10 +214,9 @@ None - all 1.0.0 features remain fully supported.
 
 ## Support
 
-- **Documentation**: [GitHub Wiki](https://github.com/OrrnobMahmud/uk-yield-rates/wiki)
 - **Bug Reports**: [GitHub Issues](https://github.com/OrrnobMahmud/uk-yield-rates/issues)
-- **Feature Requests**: [GitHub Discussions](https://github.com/OrrnobMahmud/uk-yield-rates/discussions)
-- **WordPress.org**: [Plugin Page](https://wordpress.org/plugins/uk-yield-rates/)
+- **Feature Requests**: Open an issue with "enhancement" label on GitHub
+- **WordPress.org**: Coming soon
 
 ---
 
