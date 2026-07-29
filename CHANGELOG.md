@@ -5,6 +5,45 @@ All notable changes to the UK Yield Rates Live plugin will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2026-07-30
+
+### Fixed
+
+- Added missing `wp_ajax_nopriv_uk_yield_refresh` handler so auto-refresh works for anonymous visitors
+
+---
+
+## [1.3.0] - 2026-07-30
+
+### Added
+
+- Automatic BoE ZIP download and Excel parsing via `UK_Yield_BoE_Provider`
+- File upload import for ZIP, XLSX, and CSV files via `UK_Yield_Import_Handler`
+- Unified `UK_Yield_Provider_Interface` for all data sources
+- Admin UI for file upload and import management
+
+### Changed
+
+- Cloudflare Worker marked as experimental (BoE CSV URL returns 404)
+- Marked BoE Custom Endpoint as experimental
+
+### Fixed
+
+- Version numbers synchronized across all files
+
+---
+
+## [1.2.0] - 2026-07-30
+
+### Fixed
+
+- `wp_localize_script` handle mismatch on frontend (broke auto-refresh entirely)
+- `wp_localize_script` handle mismatch in admin (broke force-refresh, manual validation, bug report modal)
+- Version constant mismatch (`UK_YIELD_RATES_VERSION` was stale at `1.0.0`)
+- Build script packaging (wrong directory, broken `exclude.txt` reference)
+
+---
+
 ## [1.1.0] - 2026-07-29
 
 ### 🎉 Major Features
@@ -172,7 +211,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned Features
 
-#### Version 1.2.0 (Planned)
+#### Version 1.4.0 (Planned)
 - [ ] Export/Import settings
 - [ ] Multiple currency support
 - [ ] Historical data charts
@@ -180,14 +219,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [ ] Email notifications for rate changes
 - [ ] REST API endpoints
 - [ ] WP-CLI commands
-
-#### Version 1.3.0 (Planned)
-- [ ] Multi-site support
-- [ ] User role permissions
-- [ ] Scheduled email reports
-- [ ] Advanced caching strategies
-- [ ] Internationalization (i18n) improvements
-- [ ] Accessibility enhancements (WCAG 2.1)
 
 ---
 

@@ -2,6 +2,11 @@
 /**
  * API Handler for UK Yield Rates
  * Handles data fetching from Bank of England and FRED APIs with auto-failover
+ *
+ * @package UK_Yield_Rates
+ * @version 1.3.1
+ * @license GPL-2.0-or-later
+ * @author Orrnob Mahmud
  */
 
 if (!defined('ABSPATH')) {
@@ -54,7 +59,10 @@ class UK_Yield_API {
         $api_source = get_option('uk_yield_rates_api_source', 'manual');
 
         // Try configured source first
-        if ($api_source === 'boe_custom') {
+        if ($api_source === 'boe_direct') {
+            $data = $this->fetch_from_boe_direct();
+            if ($data) return $data;
+        } elseif ($api_source === 'boe_custom') {
             $data = $this->fetch_from_boe_custom();
             if ($data) return $data;
         } elseif ($api_source === 'fred') {
@@ -66,6 +74,9 @@ class UK_Yield_API {
         }
 
         // Auto-failover: try all APIs
+        $data = $this->fetch_from_boe_direct();
+        if ($data) return $data;
+
         $data = $this->fetch_from_boe_custom();
         if ($data) return $data;
 
@@ -81,13 +92,25 @@ class UK_Yield_API {
     }
 
     /**
+     * Fetch from BoE direct (automatic ZIP download)
+     */
+    private function fetch_from_boe_direct() {
+        $provider = UK_Yield_BoE_Provider::get_instance();
+
+        if (!$provider->is_available()) {
+            return false;
+        }
+
+        return $provider->fetch_yields();
+    }
+
+    /**
      * Fetch from custom BoE endpoint (user-hosted API)
      */
     private function fetch_from_boe_custom() {
         $endpoint_url = get_option('uk_yield_rates_boe_custom_endpoint', '');
 
         if (empty($endpoint_url)) {
-            error_log('UK Yield Rates: Custom BoE endpoint not configured');
             return false;
         }
 
@@ -99,7 +122,6 @@ class UK_Yield_API {
         ]);
 
         if (is_wp_error($response)) {
-            error_log('UK Yield Rates: Custom BoE endpoint error - ' . $response->get_error_message());
             return false;
         }
 
@@ -107,7 +129,6 @@ class UK_Yield_API {
         $data = json_decode($body, true);
 
         if (!$data || !isset($data['yields']) || !is_array($data['yields'])) {
-            error_log('UK Yield Rates: Invalid response from custom BoE endpoint');
             return false;
         }
 
@@ -118,7 +139,7 @@ class UK_Yield_API {
                     'maturity' => $maturity,
                     'yield' => floatval($yield_data['yield']),
                     'change' => floatval($yield_data['change'] ?? 0),
-                    'date' => $yield_data['date'] ?? date('Y-m-d'),
+                    'date' => $yield_data['date'] ?? gmdate('Y-m-d'),
                 ];
             }
         }
@@ -140,7 +161,7 @@ class UK_Yield_API {
         foreach ($maturities as $maturity) {
             $yield_value = get_option('uk_yield_rates_manual_' . $maturity . '_yield', '');
             $change_value = get_option('uk_yield_rates_manual_' . $maturity . '_change', '0');
-            $date = get_option('uk_yield_rates_manual_date', date('Y-m-d'));
+            $date = get_option('uk_yield_rates_manual_date', gmdate('Y-m-d'));
 
             if (!empty($yield_value)) {
                 $yields[$maturity] = [
@@ -160,25 +181,12 @@ class UK_Yield_API {
     }
 
     /**
-     * Save manual yield data to cache
-     */
-    public function save_manual_data($yield_data) {
-        if (empty($yield_data) || !isset($yield_data['yields'])) {
-            return false;
-        }
-
-        $cache = UK_Yield_Cache::get_instance();
-        return $cache->save_manual_data($yield_data);
-    }
-
-    /**
      * Fetch from FRED API
      */
     private function fetch_from_fred() {
         $api_key = get_option('uk_yield_rates_fred_api_key', '');
 
         if (empty($api_key)) {
-            error_log('UK Yield Rates: FRED API key not configured');
             return false;
         }
 
@@ -198,7 +206,6 @@ class UK_Yield_API {
             ]);
 
             if (is_wp_error($response)) {
-                error_log('UK Yield Rates: FRED API error for ' . $maturity . ' year - ' . $response->get_error_message());
                 continue;
             }
 
@@ -221,7 +228,7 @@ class UK_Yield_API {
                 'maturity' => $maturity,
                 'yield' => $current_value,
                 'change' => $change,
-                'date' => $latest['date'] ?? date('Y-m-d'),
+                'date' => $latest['date'] ?? gmdate('Y-m-d'),
             ];
         }
 
@@ -240,16 +247,7 @@ class UK_Yield_API {
             'yields' => $yields,
             'source' => $source,
             'fetched_at' => current_time('mysql'),
-            'date' => reset($yields)['date'] ?? date('Y-m-d'),
+            'date' => reset($yields)['date'] ?? gmdate('Y-m-d'),
         ];
-    }
-
-    /**
-     * Get historical yields (optional future feature)
-     */
-    public function fetch_historical_yields($maturity = '10', $days = 30) {
-        // This could be extended to fetch historical data
-        // For now, return false
-        return false;
     }
 }

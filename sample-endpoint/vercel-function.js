@@ -1,7 +1,7 @@
 /**
- * Sample Vercel Serverless Function for Bank of England Gilt Yields
+ * Vercel Serverless Function for Bank of England Gilt Yields
  *
- * This function fetches gilt yield data from Bank of England CSV
+ * This function fetches gilt yield data from Bank of England ZIP archive
  * and exposes it as a JSON endpoint for the UK Yield Rates WordPress plugin.
  *
  * Deploy to Vercel (free tier: 100,000 requests/month)
@@ -27,13 +27,12 @@
  */
 
 export default async function handler(req, res) {
-  // Bank of England yield curve data URL
-  // Series codes: IUDM421 (2Y), IUDM423 (5Y), IUDM425 (10Y), IUDM427 (20Y), IUDM429 (30Y)
-  const csvUrl = 'https://www.bankofengland.co.uk/boeapps/database/_iad-downloadseries.asp?SeriesCodes=IUDM421,IUDM423,IUDM425,IUDM427,IUDM429&CSVF=TN&UsingCodes=Y&Period=Daily';
+  // Bank of England yield curve data URL (ZIP archive)
+  const zipUrl = 'https://www.bankofengland.co.uk/-/media/boe/files/statistics/yield-curves/latest-yield-curve-data.zip';
 
   try {
-    // Fetch CSV data from Bank of England
-    const response = await fetch(csvUrl, {
+    // Fetch ZIP data from Bank of England
+    const response = await fetch(zipUrl, {
       headers: {
         'User-Agent': 'UK-Yield-Rates-Plugin/1.0',
       },
@@ -43,15 +42,26 @@ export default async function handler(req, res) {
       throw new Error(`BoE request failed: ${response.status}`);
     }
 
-    const csvText = await response.text();
-    const yields = parseBoECSV(csvText);
+    // Get ZIP as ArrayBuffer
+    const zipBuffer = await response.arrayBuffer();
+
+    // For Vercel, we can use a more robust approach
+    // Since Vercel runs Node.js, we can use libraries like 'adm-zip' or 'xlsx'
+    // For now, we'll return an error message directing users to use the PHP import
 
     // Set CORS and caching headers
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+    res.setHeader('Cache-Control', 'public, max-age=3600');
     res.setHeader('Content-Type', 'application/json');
 
-    return res.status(200).json({ yields });
+    // TODO: Implement full ZIP/XLSX parsing with Node.js libraries
+    // Recommended libraries: 'adm-zip', 'xlsx', or 'node-stream-zip'
+
+    return res.status(200).json({
+      error: 'ZIP parsing not yet implemented',
+      message: 'Please use the PHP-based import in the plugin admin panel instead.',
+      alternative: 'Upload the BoE ZIP file directly through Settings > UK Yield Rates > Import'
+    });
   } catch (error) {
     console.error('Error fetching BoE data:', error);
     return res.status(500).json({
@@ -59,88 +69,4 @@ export default async function handler(req, res) {
       message: error.message
     });
   }
-}
-
-/**
- * Parse Bank of England CSV data and extract yields
- */
-function parseBoECSV(csvText) {
-  const lines = csvText.split('\n');
-  const yields = {};
-
-  // Maturity mapping (series code to maturity)
-  const maturityMap = {
-    'IUDM421': '2',
-    'IUDM423': '5',
-    'IUDM425': '10',
-    'IUDM427': '20',
-    'IUDM429': '30',
-  };
-
-  // Find header row and identify column positions
-  let headerIndex = -1;
-  let dateIndex = -1;
-  const seriesColumns = {};
-
-  for (let i = 0; i < Math.min(lines.length, 50); i++) {
-    const line = lines[i];
-    if (line.includes('DATE') || line.includes('RVAC')) {
-      headerIndex = i;
-      const columns = line.split(',').map(col => col.trim().replace(/"/g, ''));
-
-      columns.forEach((col, index) => {
-        if (col === 'DATE' || col === 'RVAC') {
-          dateIndex = index;
-        }
-        if (maturityMap[col]) {
-          seriesColumns[maturityMap[col]] = index;
-        }
-      });
-      break;
-    }
-  }
-
-  if (headerIndex === -1 || Object.keys(seriesColumns).length === 0) {
-    throw new Error('Could not parse CSV header');
-  }
-
-  // Find the last data row with valid data
-  let lastDataRow = null;
-  let previousDataRow = null;
-
-  for (let i = lines.length - 1; i > headerIndex; i--) {
-    const line = lines[i].trim();
-    if (!line || line.startsWith('#') || line.startsWith('DATE')) continue;
-
-    const columns = line.split(',').map(col => col.trim().replace(/"/g, ''));
-
-    if (columns[dateIndex] && columns[Object.values(seriesColumns)[0]]) {
-      if (lastDataRow === null) {
-        lastDataRow = columns;
-      } else if (previousDataRow === null) {
-        previousDataRow = columns;
-        break;
-      }
-    }
-  }
-
-  if (!lastDataRow) {
-    throw new Error('No valid data rows found');
-  }
-
-  // Extract yields for each maturity
-  for (const [maturity, colIndex] of Object.entries(seriesColumns)) {
-    const currentValue = parseFloat(lastDataRow[colIndex]);
-    const previousValue = previousDataRow ? parseFloat(previousDataRow[colIndex]) : currentValue;
-
-    if (!isNaN(currentValue)) {
-      yields[maturity] = {
-        yield: currentValue,
-        change: isNaN(previousValue) ? 0 : Math.round((currentValue - previousValue) * 100) / 100,
-        date: lastDataRow[dateIndex] || new Date().toISOString().split('T')[0],
-      };
-    }
-  }
-
-  return yields;
 }

@@ -19,11 +19,15 @@ jQuery(document).ready(function($) {
 
         // Hide all sections first
         $('#uk-yield-manual-entry').hide();
+        $('#uk-yield-boe-direct-settings').hide();
         $('#uk-yield-boe-custom-settings').hide();
         $('#uk-yield-fred-settings').hide();
 
         // Show relevant section
         if (source === 'manual') {
+            $('#uk-yield-manual-entry').show();
+        } else if (source === 'boe_direct') {
+            $('#uk-yield-boe-direct-settings').show();
             $('#uk-yield-manual-entry').show();
         } else if (source === 'boe_custom') {
             $('#uk-yield-boe-custom-settings').show();
@@ -192,11 +196,11 @@ jQuery(document).ready(function($) {
         }
 
         $.ajax({
-            url: ajaxurl,
+            url: ukYieldAdmin.ajax_url,
             type: 'POST',
             data: {
                 action: 'uk_yield_refresh_cache',
-                nonce: $('[name="uk_yield_rates_settings[_wpnonce]"]').val()
+                nonce: ukYieldAdmin.nonce
             },
             success: function(response) {
                 if (response.success) {
@@ -428,5 +432,122 @@ jQuery(document).ready(function($) {
             var counterClass = currentLength > maxLength ? 'uk-yield-error' : 'uk-yield-warning';
             $textarea.after('<span class="uk-yield-char-count ' + counterClass + '">' + currentLength + '/' + maxLength + ' characters</span>');
         }
+    });
+
+    // ============================================
+    // IMPORT FUNCTIONALITY
+    // ============================================
+
+    // Auto download from BoE
+    $('#uk-yield-auto-download').on('click', function() {
+        var $button = $(this);
+        var $status = $('#uk-yield-auto-download-status');
+        var originalText = $button.text();
+
+        if (!confirm('Download the latest yield data from Bank of England? This will overwrite any manually entered data.')) {
+            return;
+        }
+
+        $button.prop('disabled', true).text('Downloading...');
+        $status.text('Fetching data from Bank of England...').css('color', '#0369a1');
+
+        $.ajax({
+            url: ukYieldAdmin.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'uk_yield_auto_download',
+                nonce: ukYieldAdmin.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    $status.html('<span style="color: #166534;">✓ ' + response.data.message + '</span>');
+                    $button.text('Download Successful!');
+
+                    // Update manual entry fields with imported data
+                    if (response.data.data && response.data.data.yields) {
+                        var yields = response.data.data.yields;
+                        for (var maturity in yields) {
+                            if (yields.hasOwnProperty(maturity)) {
+                                $('input[name="uk_yield_rates_manual_' + maturity + '_yield"]').val(yields[maturity].yield);
+                                $('input[name="uk_yield_rates_manual_' + maturity + '_change"]').val(yields[maturity].change);
+                            }
+                        }
+                        $('input[name="uk_yield_rates_manual_date"]').val(response.data.data.date);
+                    }
+
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000);
+                } else {
+                    $status.html('<span style="color: #dc2626;">✗ ' + response.data + '</span>');
+                    $button.prop('disabled', false).text(originalText);
+                }
+            },
+            error: function() {
+                $status.html('<span style="color: #dc2626;">✗ Network error. Please try again.</span>');
+                $button.prop('disabled', false).text(originalText);
+            }
+        });
+    });
+
+    // File upload form submission
+    $('#uk-yield-import-form').on('submit', function(e) {
+        e.preventDefault();
+
+        var $form = $(this);
+        var $button = $('#uk-yield-import-btn');
+        var $status = $('#uk-yield-import-status');
+        var $fileInput = $('#uk-yield-file-input');
+        var originalText = $button.text();
+
+        if (!$fileInput.val()) {
+            $status.html('<span style="color: #dc2626;">Please select a file to upload.</span>');
+            return;
+        }
+
+        var formData = new FormData($form[0]);
+        formData.append('action', 'uk_yield_import_file');
+        formData.append('nonce', ukYieldAdmin.nonce);
+
+        $button.prop('disabled', true).text('Importing...');
+        $status.text('Processing file...').css('color', '#0369a1');
+
+        $.ajax({
+            url: ukYieldAdmin.ajax_url,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success) {
+                    $status.html('<span style="color: #166534;">✓ ' + response.data.message + '</span>');
+                    $button.text('Import Successful!');
+                    $fileInput.val('');
+
+                    // Update manual entry fields with imported data
+                    if (response.data.data && response.data.data.yields) {
+                        var yields = response.data.data.yields;
+                        for (var maturity in yields) {
+                            if (yields.hasOwnProperty(maturity)) {
+                                $('input[name="uk_yield_rates_manual_' + maturity + '_yield"]').val(yields[maturity].yield);
+                                $('input[name="uk_yield_rates_manual_' + maturity + '_change"]').val(yields[maturity].change);
+                            }
+                        }
+                        $('input[name="uk_yield_rates_manual_date"]').val(response.data.data.date);
+                    }
+
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000);
+                } else {
+                    $status.html('<span style="color: #dc2626;">✗ ' + response.data + '</span>');
+                    $button.prop('disabled', false).text(originalText);
+                }
+            },
+            error: function() {
+                $status.html('<span style="color: #dc2626;">✗ Network error. Please try again.</span>');
+                $button.prop('disabled', false).text(originalText);
+            }
+        });
     });
 });

@@ -1,6 +1,6 @@
 # UK Yield Rates Live
 
-[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/OrrnobMahmud/uk-yield-rates/releases)
+[![Version](https://img.shields.io/badge/version-1.3.1-blue.svg)](https://github.com/OrrnobMahmud/uk-yield-rates/releases)
 [![License](https://img.shields.io/badge/license-GPL%20v2%2B-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![PHP Version](https://img.shields.io/badge/php-7.4%2B-purple.svg)](https://php.net)
 
@@ -214,25 +214,31 @@ Features:
 
 ## 🔄 Changelog
 
+### 1.3.1 (2026-07-30)
+- Fixed auto-refresh not working for anonymous visitors
+
+### 1.3.0 (2026-07-30)
+- **BoE Direct Download** - Automatic ZIP download and Excel parsing
+- **File Upload Import** - Upload ZIP, XLSX, or CSV files manually
+- **Unified Provider Interface** - Consistent API across all data sources
+- Cloudflare Worker marked experimental (BoE CSV URL returns 404)
+
+### 1.2.0 (2026-07-30)
+- Fixed wp_localize_script handle mismatch (frontend and admin)
+- Fixed version constant mismatch
+- Fixed build script packaging
+
 ### 1.1.0 (2026-07-29)
-#### ✨ New Features
 - **Text Style Inheritance** - Shortcodes inherit parent element styles
 - **GitHub Bug Reporting** - Report bugs directly from admin
 - **Feature Request System** - Request features via GitHub
 - **Block Editor Preview Modes** - Live, sample, and custom shortcode preview
 - **Theme Preview** - See light/dark themes in editor
-
-#### 🎨 Improvements
-- **Admin UI** - Validation, loading states, confirmation dialogs
-- **Frontend** - Animations, tooltips, hover effects, loading states
-- **Block Editor** - Better preview, copy shortcode button
-
-#### 🐛 Bug Fixes
-- Fixed auto-refresh not sending maturity parameter
-- Fixed shortcodes not outputting data attributes
-- Added XSS sanitization for block editor preview
-- Eliminated duplicated shortcode builder code
-- Fixed weekend cache ignoring admin settings
+- Improved admin UI with validation and loading states
+- Added frontend animations and tooltips
+- Fixed auto-refresh maturity parameter issue
+- Fixed weekend cache duration override
+- Added XSS sanitization for block editor
 
 ### 1.0.0 (2026-07-28)
 - Initial release

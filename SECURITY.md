@@ -455,7 +455,7 @@ This security policy is licensed under the GPL v2 or later.
 
 ---
 
-**Last updated**: 2026-07-29  
-**Version**: 1.1.0
+**Last updated**: 2026-07-30
+**Version**: 1.3.1
 
 Thank you for helping keep UK Yield Rates Live secure! 🔒

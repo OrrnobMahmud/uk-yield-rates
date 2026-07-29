@@ -1,7 +1,10 @@
 {
     "$schema": "https://schemas.wp.org/trunk/block.json",
-    "apiVersion": 2,
+    "apiVersion": 3,
     "name": "uk-yield-rates/yield-rates",
+    "version": "1.3.1",
+    "license": "GPL-2.0-or-later",
+    "textdomain": "uk-yield-rates",
     "title": "UK Yield Rates",
     "description": "Display live UK gilt yield rates",
     "category": "widgets",

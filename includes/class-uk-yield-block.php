@@ -1,6 +1,11 @@
 <?php
 /**
  * Gutenberg Block for UK Yield Rates
+ *
+ * @package UK_Yield_Rates
+ * @version 1.3.1
+ * @license GPL-2.0-or-later
+ * @author Orrnob Mahmud
  */
 
 if (!defined('ABSPATH')) {
@@ -27,30 +32,21 @@ class UK_Yield_Block {
      * Register Gutenberg block
      */
     public function register_block() {
-        // Register block
+        // Register block — block.json handles editorScript, editorStyle, style
         register_block_type('uk-yield-rates/yield-rates', [
             'render_callback' => [$this, 'render_block'],
-            'editor_script' => 'uk-yield-block-editor',
-            'editor_style' => 'uk-yield-block-editor-style',
-            'style' => 'uk-yield-block-style',
-        ]);
-
-        // Localize script for block
-        wp_localize_script('uk-yield-block-editor', 'ukYieldBlockData', [
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('uk_yield_rates_nonce'),
         ]);
     }
 
     /**
-     * Enqueue block assets
+     * Register block assets (block.json handles enqueuing)
      */
-    public function enqueue_block_assets($hook) {
+    public function enqueue_block_assets() {
         $asset_file = UK_YIELD_RATES_PLUGIN_DIR . 'blocks/yield-rates/dist/index.asset.php';
         $asset = file_exists($asset_file) ? require $asset_file : ['dependencies' => [], 'version' => UK_YIELD_RATES_VERSION];
 
-        // Editor script
-        wp_enqueue_script(
+        // Register editor script (block.json enqueues via editorScript handle)
+        wp_register_script(
             'uk-yield-block-editor',
             UK_YIELD_RATES_PLUGIN_URL . 'blocks/yield-rates/dist/index.js',
             $asset['dependencies'],
@@ -58,16 +54,22 @@ class UK_Yield_Block {
             true
         );
 
-        // Editor style
-        wp_enqueue_style(
+        // Localize script for block
+        wp_localize_script('uk-yield-block-editor', 'ukYieldBlockData', [
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('uk_yield_rates_nonce'),
+        ]);
+
+        // Register editor style (block.json enqueues via editorStyle handle)
+        wp_register_style(
             'uk-yield-block-editor-style',
             UK_YIELD_RATES_PLUGIN_URL . 'blocks/yield-rates/editor.css',
             [],
             UK_YIELD_RATES_VERSION
         );
 
-        // Frontend style
-        wp_enqueue_style(
+        // Register frontend style (block.json enqueues via style handle)
+        wp_register_style(
             'uk-yield-block-style',
             UK_YIELD_RATES_PLUGIN_URL . 'public/css/yield-rates.css',
             [],

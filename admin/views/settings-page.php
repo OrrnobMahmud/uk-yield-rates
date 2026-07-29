@@ -1,6 +1,11 @@
 <?php
 /**
  * Admin Settings Page
+ *
+ * @package UK_Yield_Rates
+ * @version 1.3.1
+ * @license GPL-2.0-or-later
+ * @author Orrnob Mahmud
  */
 
 if (!defined('ABSPATH')) {
@@ -8,30 +13,31 @@ if (!defined('ABSPATH')) {
 }
 
 // Get current settings
-$api_source = get_option('uk_yield_rates_api_source', 'manual');
-$fred_api_key = get_option('uk_yield_rates_fred_api_key', '');
-$update_interval = get_option('uk_yield_rates_update_interval', '1');
-$default_format = get_option('uk_yield_rates_default_format', 'inline');
-$decimal_places = get_option('uk_yield_rates_decimal_places', '2');
-$show_change = get_option('uk_yield_rates_show_change', 'yes');
-$show_last_updated = get_option('uk_yield_rates_show_last_updated', 'yes');
-$theme = get_option('uk_yield_rates_theme', 'light');
-$cache_duration = get_option('uk_yield_rates_cache_duration', '1');
-$auto_refresh = get_option('uk_yield_rates_auto_refresh', 'no');
-$refresh_interval = get_option('uk_yield_rates_refresh_interval', '5');
+$uk_yield_rates_api_source = get_option('uk_yield_rates_api_source', 'manual');
+$uk_yield_rates_fred_api_key = get_option('uk_yield_rates_fred_api_key', '');
+$uk_yield_rates_update_interval = get_option('uk_yield_rates_update_interval', '1');
+$uk_yield_rates_default_format = get_option('uk_yield_rates_default_format', 'inline');
+$uk_yield_rates_decimal_places = get_option('uk_yield_rates_decimal_places', '2');
+$uk_yield_rates_show_change = get_option('uk_yield_rates_show_change', 'yes');
+$uk_yield_rates_show_last_updated = get_option('uk_yield_rates_show_last_updated', 'yes');
+$uk_yield_rates_theme = get_option('uk_yield_rates_theme', 'light');
+$uk_yield_rates_cache_duration = get_option('uk_yield_rates_cache_duration', '1');
+$uk_yield_rates_auto_refresh = get_option('uk_yield_rates_auto_refresh', 'no');
+$uk_yield_rates_refresh_interval = get_option('uk_yield_rates_refresh_interval', '5');
 
 // Get cache info
-$cache = UK_Yield_Cache::get_instance();
-$cache_info = $cache->get_cache_info();
+$uk_yield_rates_cache = UK_Yield_Cache::get_instance();
+$uk_yield_rates_cache_info = $uk_yield_rates_cache->get_cache_info();
 ?>
 
 <div class="wrap">
     <h1><?php echo esc_html__('UK Yield Rates Settings', 'uk-yield-rates'); ?></h1>
 
-    <?php if (isset($_GET['settings-updated'])): ?>
-        <div class="notice notice-success">
+    <?php if ($uk_yield_rates_notice = get_transient('uk_yield_rates_settings_notice')): ?>
+        <div class="notice notice-success is-dismissible">
             <p><?php echo esc_html__('Settings saved.', 'uk-yield-rates'); ?></p>
         </div>
+        <?php delete_transient('uk_yield_rates_settings_notice'); ?>
     <?php endif; ?>
 
     <form method="post" action="options.php">
@@ -54,26 +60,54 @@ $cache_info = $cache->get_cache_info();
                             <th scope="row"><?php echo esc_html__('Data Source', 'uk-yield-rates'); ?></th>
                             <td>
                                 <select name="uk_yield_rates_api_source" id="uk-yield-data-source">
-                                    <option value="manual" <?php selected($api_source, 'manual'); ?>><?php echo esc_html__('Manual Entry (Recommended - FREE & Reliable)', 'uk-yield-rates'); ?></option>
-                                    <option value="boe_custom" <?php selected($api_source, 'boe_custom'); ?>><?php echo esc_html__('BoE Custom Endpoint (Free - requires setup)', 'uk-yield-rates'); ?></option>
-                                    <option value="fred" <?php selected($api_source, 'fred'); ?>><?php echo esc_html__('FRED API (Free tier available)', 'uk-yield-rates'); ?></option>
-                                    <option value="auto" <?php selected($api_source, 'auto'); ?>><?php echo esc_html__('Auto (try all sources)', 'uk-yield-rates'); ?></option>
+                                    <option value="manual" <?php selected($uk_yield_rates_api_source, 'manual'); ?>><?php echo esc_html__('Manual Entry (Recommended - FREE & Reliable)', 'uk-yield-rates'); ?></option>
+                                    <option value="boe_direct" <?php selected($uk_yield_rates_api_source, 'boe_direct'); ?>><?php echo esc_html__('BoE Direct Download (Automatic - FREE)', 'uk-yield-rates'); ?></option>
+                                    <option value="boe_custom" <?php selected($uk_yield_rates_api_source, 'boe_custom'); ?>><?php echo esc_html__('BoE Custom Endpoint (Free - requires setup)', 'uk-yield-rates'); ?></option>
+                                    <option value="fred" <?php selected($uk_yield_rates_api_source, 'fred'); ?>><?php echo esc_html__('FRED API (Free tier available)', 'uk-yield-rates'); ?></option>
+                                    <option value="auto" <?php selected($uk_yield_rates_api_source, 'auto'); ?>><?php echo esc_html__('Auto (try all sources)', 'uk-yield-rates'); ?></option>
                                 </select>
                                 <p class="description"><?php echo esc_html__('Manual entry is recommended - just update rates once weekly from Bank of England website. 100% reliable, no API costs.', 'uk-yield-rates'); ?></p>
                             </td>
                         </tr>
                     </table>
 
+                    <!-- BoE Direct Download Section -->
+                    <div id="uk-yield-boe-direct-settings" class="uk-yield-boe-direct-section" style="display: <?php echo ($uk_yield_rates_api_source === 'boe_direct') ? 'block' : 'none'; ?>;">
+                        <h3><?php echo esc_html__('Bank of England Direct Download', 'uk-yield-rates'); ?></h3>
+                        <p class="description">
+                            <strong><?php echo esc_html__('Automatic updates from official source:', 'uk-yield-rates'); ?></strong>
+                            <?php echo esc_html__('The plugin will automatically download the latest yield curve data directly from the Bank of England website. No API key or external service required.', 'uk-yield-rates'); ?>
+                        </p>
+
+                        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 15px; margin: 15px 0;">
+                            <h4 style="margin-top: 0; color: #166534;"><?php echo esc_html__('How it works:', 'uk-yield-rates'); ?></h4>
+                            <ol style="margin: 10px 0; padding-left: 20px;">
+                                <li><?php echo esc_html__('Plugin downloads the official BoE yield curve ZIP archive', 'uk-yield-rates'); ?></li>
+                                <li><?php echo esc_html__('Extracts the GLC Nominal workbook', 'uk-yield-rates'); ?></li>
+                                <li><?php echo esc_html__('Parses yield data for 2Y, 5Y, 10Y, 20Y, and 30Y maturities', 'uk-yield-rates'); ?></li>
+                                <li><?php echo esc_html__('Automatically updates all shortcodes and blocks', 'uk-yield-rates'); ?></li>
+                            </ol>
+                        </div>
+
+                        <p class="description">
+                            <strong><?php echo esc_html__('Requirements:', 'uk-yield-rates'); ?></strong>
+                            <ul>
+                                <li><?php echo esc_html__('PHP Zip extension (usually enabled by default)', 'uk-yield-rates'); ?></li>
+                                <li><?php echo esc_html__('Outbound HTTP requests enabled (for downloading from BoE)', 'uk-yield-rates'); ?></li>
+                            </ul>
+                        </p>
+                    </div>
+
                     <!-- Manual Entry Section -->
-                    <div id="uk-yield-manual-entry" class="uk-yield-manual-section" style="display: <?php echo ($api_source === 'manual') ? 'block' : 'none'; ?>;">
+                    <div id="uk-yield-manual-entry" class="uk-yield-manual-section" style="display: <?php echo ($uk_yield_rates_api_source === 'manual') ? 'block' : 'none'; ?>;">
                         <h3><?php echo esc_html__('Manual Yield Rate Entry', 'uk-yield-rates'); ?></h3>
-                        <p class="description"><?php echo esc_html__('Enter current UK gilt yields. Update these when rates change (usually daily). You can find current rates at https://www.bankofengland.co.uk/statistics/yield-curves', 'uk-yield-rates'); ?></p>
+                        <p class="description"><?php echo esc_html__('Enter current UK gilt yields. Update these when rates change (usually daily). Find current rates from your broker, financial news sites, or search "UK gilt yields today". The Bank of England publishes yield curves (charts), not individual values.', 'uk-yield-rates'); ?></p>
 
                         <table class="form-table">
                             <tr>
                                 <th scope="row"><?php echo esc_html__('Data Date', 'uk-yield-rates'); ?></th>
                                 <td>
-                                    <input type="date" name="uk_yield_rates_manual_date" value="<?php echo esc_attr(get_option('uk_yield_rates_manual_date', date('Y-m-d'))); ?>">
+                                    <input type="date" name="uk_yield_rates_manual_date" value="<?php echo esc_attr(get_option('uk_yield_rates_manual_date', gmdate('Y-m-d'))); ?>">
                                     <p class="description"><?php echo esc_html__('Date of the yield rates you are entering.', 'uk-yield-rates'); ?></p>
                                 </td>
                             </tr>
@@ -116,12 +150,42 @@ $cache_info = $cache->get_cache_info();
 
                         <p class="description">
                             <strong><?php echo esc_html__('Quick Update Tip:', 'uk-yield-rates'); ?></strong>
-                            <?php echo esc_html__('Check https://www.bankofengland.co.uk/statistics/yield-curves for current rates, then enter them above. The plugin will automatically display them across all your pages!', 'uk-yield-rates'); ?>
+                            <?php echo esc_html__('Search "UK gilt yields today" for current rates from financial news sites, or check your broker platform. The plugin will automatically display them across all your pages!', 'uk-yield-rates'); ?>
                         </p>
                     </div>
 
+                    <!-- Import Section -->
+                    <div id="uk-yield-import-section" class="uk-yield-import-section" style="display: block; margin-top: 20px;">
+                        <h3><?php echo esc_html__('Import Yield Data', 'uk-yield-rates'); ?></h3>
+                        <p class="description"><?php echo esc_html__('Import yield data from Bank of England ZIP archives, Excel spreadsheets, or CSV files.', 'uk-yield-rates'); ?></p>
+
+                        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 15px; margin: 15px 0;">
+                            <h4 style="margin-top: 0; color: #166534;"><?php echo esc_html__('Automatic Download (Recommended)', 'uk-yield-rates'); ?></h4>
+                            <p style="margin-bottom: 10px;"><?php echo esc_html__('Download the latest official Bank of England yield curve data automatically.', 'uk-yield-rates'); ?></p>
+                            <button type="button" class="button button-primary" id="uk-yield-auto-download">
+                                <?php echo esc_html__('Download from Bank of England', 'uk-yield-rates'); ?>
+                            </button>
+                            <span id="uk-yield-auto-download-status" style="margin-left: 10px;"></span>
+                        </div>
+
+                        <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 15px; margin: 15px 0;">
+                            <h4 style="margin-top: 0; color: #92400e;"><?php echo esc_html__('Manual File Upload', 'uk-yield-rates'); ?></h4>
+                            <p style="margin-bottom: 10px;"><?php echo esc_html__('Upload a Bank of England ZIP archive, Excel file (.xlsx), or CSV file with yield data.', 'uk-yield-rates'); ?></p>
+                            <form id="uk-yield-import-form" enctype="multipart/form-data" style="display: flex; align-items: center; gap: 10px;">
+                                <input type="file" name="yield_file" id="uk-yield-file-input" accept=".zip,.xlsx,.xls,.csv" style="flex: 1;">
+                                <button type="submit" class="button button-secondary" id="uk-yield-import-btn">
+                                    <?php echo esc_html__('Upload & Import', 'uk-yield-rates'); ?>
+                                </button>
+                            </form>
+                            <span id="uk-yield-import-status" style="display: block; margin-top: 10px;"></span>
+                            <p class="description" style="margin-top: 10px;">
+                                <?php echo esc_html__('Supported formats: ZIP (BoE archive), XLSX, CSV. Maximum file size: 10MB.', 'uk-yield-rates'); ?>
+                            </p>
+                        </div>
+                    </div>
+
                     <!-- BoE Custom Endpoint Section -->
-                    <div id="uk-yield-boe-custom-settings" class="uk-yield-boe-custom-section" style="display: <?php echo ($api_source === 'boe_custom' || $api_source === 'auto') ? 'block' : 'none'; ?>;">
+                    <div id="uk-yield-boe-custom-settings" class="uk-yield-boe-custom-section" style="display: <?php echo ($uk_yield_rates_api_source === 'boe_custom' || $uk_yield_rates_api_source === 'auto') ? 'block' : 'none'; ?>;">
                         <h3><?php echo esc_html__('Bank of England Custom Endpoint', 'uk-yield-rates'); ?></h3>
                         <p class="description">
                             <strong><?php echo esc_html__('Recommended free option with some setup:', 'uk-yield-rates'); ?></strong>
@@ -188,7 +252,7 @@ $cache_info = $cache->get_cache_info();
                     </div>
 
                     <!-- FRED API Section -->
-                    <div id="uk-yield-fred-settings" class="uk-yield-fred-section" style="display: <?php echo ($api_source === 'fred' || $api_source === 'auto') ? 'block' : 'none'; ?>;">
+                    <div id="uk-yield-fred-settings" class="uk-yield-fred-section" style="display: <?php echo ($uk_yield_rates_api_source === 'fred' || $uk_yield_rates_api_source === 'auto') ? 'block' : 'none'; ?>;">
                         <h3><?php echo esc_html__('FRED API Configuration', 'uk-yield-rates'); ?></h3>
                         <p class="description">
                             <strong><?php echo esc_html__('Get your free API key:', 'uk-yield-rates'); ?></strong>
@@ -198,7 +262,7 @@ $cache_info = $cache->get_cache_info();
                             <tr>
                                 <th scope="row"><?php echo esc_html__('FRED API Key', 'uk-yield-rates'); ?></th>
                                 <td>
-                                    <input type="text" name="uk_yield_rates_fred_api_key" value="<?php echo esc_attr($fred_api_key); ?>" class="regular-text" placeholder="Enter your API key">
+                                    <input type="text" name="uk_yield_rates_fred_api_key" value="<?php echo esc_attr($uk_yield_rates_fred_api_key); ?>" class="regular-text" placeholder="Enter your API key">
                                     <p class="description"><?php echo esc_html__('Paste your API key from FRED dashboard.', 'uk-yield-rates'); ?></p>
                                 </td>
                             </tr>
@@ -217,19 +281,19 @@ $cache_info = $cache->get_cache_info();
                         <h3><?php echo esc_html__('Current Status', 'uk-yield-rates'); ?></h3>
                         <p>
                             <strong><?php echo esc_html__('Has Data:', 'uk-yield-rates'); ?></strong>
-                            <?php echo $cache_info['has_cache'] ? '✅' : '❌'; ?>
+                            <?php echo $uk_yield_rates_cache_info['has_cache'] ? '✅' : '❌'; ?>
                         </p>
                         <p>
                             <strong><?php echo esc_html__('Last Updated:', 'uk-yield-rates'); ?></strong>
-                            <?php echo $cache_info['last_updated'] ? esc_html($cache_info['last_updated']) : esc_html__('Never', 'uk-yield-rates'); ?>
+                            <?php echo $uk_yield_rates_cache_info['last_updated'] ? esc_html($uk_yield_rates_cache_info['last_updated']) : esc_html__('Never', 'uk-yield-rates'); ?>
                         </p>
                         <p>
                             <strong><?php echo esc_html__('Source:', 'uk-yield-rates'); ?></strong>
-                            <?php echo esc_html(ucfirst($cache_info['source'] ?? 'N/A')); ?>
+                            <?php echo esc_html(ucfirst($uk_yield_rates_cache_info['source'] ?? 'N/A')); ?>
                         </p>
                         <p>
                             <strong><?php echo esc_html__('Stale:', 'uk-yield-rates'); ?></strong>
-                            <?php echo $cache_info['is_stale'] ? '⚠️ Yes' : '✅ No'; ?>
+                            <?php echo $uk_yield_rates_cache_info['is_stale'] ? '⚠️ Yes' : '✅ No'; ?>
                         </p>
                         <button type="button" class="button button-secondary" id="uk-yield-refresh-cache">
                             <?php echo esc_html__('Refresh Data', 'uk-yield-rates'); ?>
@@ -244,10 +308,10 @@ $cache_info = $cache->get_cache_info();
                             <th scope="row"><?php echo esc_html__('Default Format', 'uk-yield-rates'); ?></th>
                             <td>
                                 <select name="uk_yield_rates_default_format">
-                                    <option value="inline" <?php selected($default_format, 'inline'); ?>><?php echo esc_html__('Inline (for paragraphs)', 'uk-yield-rates'); ?></option>
-                                    <option value="sidebar" <?php selected($default_format, 'sidebar'); ?>><?php echo esc_html__('Sidebar Widget', 'uk-yield-rates'); ?></option>
-                                    <option value="table" <?php selected($default_format, 'table'); ?>><?php echo esc_html__('Table', 'uk-yield-rates'); ?></option>
-                                    <option value="compact" <?php selected($default_format, 'compact'); ?>><?php echo esc_html__('Compact', 'uk-yield-rates'); ?></option>
+                                    <option value="inline" <?php selected($uk_yield_rates_default_format, 'inline'); ?>><?php echo esc_html__('Inline (for paragraphs)', 'uk-yield-rates'); ?></option>
+                                    <option value="sidebar" <?php selected($uk_yield_rates_default_format, 'sidebar'); ?>><?php echo esc_html__('Sidebar Widget', 'uk-yield-rates'); ?></option>
+                                    <option value="table" <?php selected($uk_yield_rates_default_format, 'table'); ?>><?php echo esc_html__('Table', 'uk-yield-rates'); ?></option>
+                                    <option value="compact" <?php selected($uk_yield_rates_default_format, 'compact'); ?>><?php echo esc_html__('Compact', 'uk-yield-rates'); ?></option>
                                 </select>
                                 <p class="description"><?php echo esc_html__('Default display format for shortcodes.', 'uk-yield-rates'); ?></p>
                             </td>
@@ -256,9 +320,9 @@ $cache_info = $cache->get_cache_info();
                             <th scope="row"><?php echo esc_html__('Decimal Places', 'uk-yield-rates'); ?></th>
                             <td>
                                 <select name="uk_yield_rates_decimal_places">
-                                    <option value="2" <?php selected($decimal_places, '2'); ?>>2</option>
-                                    <option value="3" <?php selected($decimal_places, '3'); ?>>3</option>
-                                    <option value="4" <?php selected($decimal_places, '4'); ?>>4</option>
+                                    <option value="2" <?php selected($uk_yield_rates_decimal_places, '2'); ?>>2</option>
+                                    <option value="3" <?php selected($uk_yield_rates_decimal_places, '3'); ?>>3</option>
+                                    <option value="4" <?php selected($uk_yield_rates_decimal_places, '4'); ?>>4</option>
                                 </select>
                                 <p class="description"><?php echo esc_html__('Number of decimal places for yield values.', 'uk-yield-rates'); ?></p>
                             </td>
@@ -267,7 +331,7 @@ $cache_info = $cache->get_cache_info();
                             <th scope="row"><?php echo esc_html__('Show Change', 'uk-yield-rates'); ?></th>
                             <td>
                                 <label>
-                                    <input type="checkbox" name="uk_yield_rates_show_change" value="yes" <?php checked($show_change, 'yes'); ?>>
+                                    <input type="checkbox" name="uk_yield_rates_show_change" value="yes" <?php checked($uk_yield_rates_show_change, 'yes'); ?>>
                                     <?php echo esc_html__('Show change indicator (↑↓→)', 'uk-yield-rates'); ?>
                                 </label>
                             </td>
@@ -276,7 +340,7 @@ $cache_info = $cache->get_cache_info();
                             <th scope="row"><?php echo esc_html__('Show Last Updated', 'uk-yield-rates'); ?></th>
                             <td>
                                 <label>
-                                    <input type="checkbox" name="uk_yield_rates_show_last_updated" value="yes" <?php checked($show_last_updated, 'yes'); ?>>
+                                    <input type="checkbox" name="uk_yield_rates_show_last_updated" value="yes" <?php checked($uk_yield_rates_show_last_updated, 'yes'); ?>>
                                     <?php echo esc_html__('Show last updated timestamp', 'uk-yield-rates'); ?>
                                 </label>
                             </td>
@@ -285,8 +349,8 @@ $cache_info = $cache->get_cache_info();
                             <th scope="row"><?php echo esc_html__('Theme', 'uk-yield-rates'); ?></th>
                             <td>
                                 <select name="uk_yield_rates_theme">
-                                    <option value="light" <?php selected($theme, 'light'); ?>><?php echo esc_html__('Light', 'uk-yield-rates'); ?></option>
-                                    <option value="dark" <?php selected($theme, 'dark'); ?>><?php echo esc_html__('Dark', 'uk-yield-rates'); ?></option>
+                                    <option value="light" <?php selected($uk_yield_rates_theme, 'light'); ?>><?php echo esc_html__('Light', 'uk-yield-rates'); ?></option>
+                                    <option value="dark" <?php selected($uk_yield_rates_theme, 'dark'); ?>><?php echo esc_html__('Dark', 'uk-yield-rates'); ?></option>
                                 </select>
                                 <p class="description"><?php echo esc_html__('Color theme for yield display.', 'uk-yield-rates'); ?></p>
                             </td>
@@ -301,10 +365,10 @@ $cache_info = $cache->get_cache_info();
                             <th scope="row"><?php echo esc_html__('Cache Duration', 'uk-yield-rates'); ?></th>
                             <td>
                                 <select name="uk_yield_rates_cache_duration">
-                                    <option value="1" <?php selected($cache_duration, '1'); ?>><?php echo esc_html__('1 hour', 'uk-yield-rates'); ?></option>
-                                    <option value="4" <?php selected($cache_duration, '4'); ?>><?php echo esc_html__('4 hours', 'uk-yield-rates'); ?></option>
-                                    <option value="12" <?php selected($cache_duration, '12'); ?>><?php echo esc_html__('12 hours', 'uk-yield-rates'); ?></option>
-                                    <option value="24" <?php selected($cache_duration, '24'); ?>><?php echo esc_html__('24 hours', 'uk-yield-rates'); ?></option>
+                                    <option value="1" <?php selected($uk_yield_rates_cache_duration, '1'); ?>><?php echo esc_html__('1 hour', 'uk-yield-rates'); ?></option>
+                                    <option value="4" <?php selected($uk_yield_rates_cache_duration, '4'); ?>><?php echo esc_html__('4 hours', 'uk-yield-rates'); ?></option>
+                                    <option value="12" <?php selected($uk_yield_rates_cache_duration, '12'); ?>><?php echo esc_html__('12 hours', 'uk-yield-rates'); ?></option>
+                                    <option value="24" <?php selected($uk_yield_rates_cache_duration, '24'); ?>><?php echo esc_html__('24 hours', 'uk-yield-rates'); ?></option>
                                 </select>
                                 <p class="description"><?php echo esc_html__('How long to cache yield data.', 'uk-yield-rates'); ?></p>
                             </td>
@@ -313,7 +377,7 @@ $cache_info = $cache->get_cache_info();
                             <th scope="row"><?php echo esc_html__('Auto-Refresh', 'uk-yield-rates'); ?></th>
                             <td>
                                 <label>
-                                    <input type="checkbox" name="uk_yield_rates_auto_refresh" value="yes" <?php checked($auto_refresh, 'yes'); ?>>
+                                    <input type="checkbox" name="uk_yield_rates_auto_refresh" value="yes" <?php checked($uk_yield_rates_auto_refresh, 'yes'); ?>>
                                     <?php echo esc_html__('Enable AJAX auto-refresh', 'uk-yield-rates'); ?>
                                 </label>
                                 <p class="description"><?php echo esc_html__('Automatically refresh yield data on the frontend.', 'uk-yield-rates'); ?></p>
@@ -323,10 +387,10 @@ $cache_info = $cache->get_cache_info();
                             <th scope="row"><?php echo esc_html__('Refresh Interval', 'uk-yield-rates'); ?></th>
                             <td>
                                 <select name="uk_yield_rates_refresh_interval">
-                                    <option value="5" <?php selected($refresh_interval, '5'); ?>><?php echo esc_html__('Every 5 minutes', 'uk-yield-rates'); ?></option>
-                                    <option value="15" <?php selected($refresh_interval, '15'); ?>><?php echo esc_html__('Every 15 minutes', 'uk-yield-rates'); ?></option>
-                                    <option value="30" <?php selected($refresh_interval, '30'); ?>><?php echo esc_html__('Every 30 minutes', 'uk-yield-rates'); ?></option>
-                                    <option value="60" <?php selected($refresh_interval, '60'); ?>><?php echo esc_html__('Every hour', 'uk-yield-rates'); ?></option>
+                                    <option value="5" <?php selected($uk_yield_rates_refresh_interval, '5'); ?>><?php echo esc_html__('Every 5 minutes', 'uk-yield-rates'); ?></option>
+                                    <option value="15" <?php selected($uk_yield_rates_refresh_interval, '15'); ?>><?php echo esc_html__('Every 15 minutes', 'uk-yield-rates'); ?></option>
+                                    <option value="30" <?php selected($uk_yield_rates_refresh_interval, '30'); ?>><?php echo esc_html__('Every 30 minutes', 'uk-yield-rates'); ?></option>
+                                    <option value="60" <?php selected($uk_yield_rates_refresh_interval, '60'); ?>><?php echo esc_html__('Every hour', 'uk-yield-rates'); ?></option>
                                 </select>
                                 <p class="description"><?php echo esc_html__('How often to refresh data when auto-refresh is enabled.', 'uk-yield-rates'); ?></p>
                             </td>
@@ -346,7 +410,7 @@ $cache_info = $cache->get_cache_info();
             <h3><?php echo esc_html__('Option A: Manual Updates (Recommended - FREE & Reliable)', 'uk-yield-rates'); ?></h3>
             <ol>
                 <li><?php echo esc_html__('Select "Manual Entry" as data source above', 'uk-yield-rates'); ?></li>
-                <li><?php echo esc_html__('Go to https://www.bankofengland.co.uk/statistics/yield-curves', 'uk-yield-rates'); ?></li>
+                <li><?php echo esc_html__('Search "UK gilt yields today" or check your broker platform for current rates', 'uk-yield-rates'); ?></li>
                 <li><?php echo esc_html__('Enter current yields for 2Y, 5Y, 10Y, 20Y, and 30Y', 'uk-yield-rates'); ?></li>
                 <li><?php echo esc_html__('Click "Save Changes"', 'uk-yield-rates'); ?></li>
                 <li><?php echo esc_html__('Update once weekly - all pages auto-update!', 'uk-yield-rates'); ?></li>
@@ -471,7 +535,7 @@ $cache_info = $cache->get_cache_info();
                 <div class="uk-yield-form-group">
                     <label><?php echo esc_html__('System Information (Auto-detected)', 'uk-yield-rates'); ?></label>
                     <div class="uk-yield-system-info">
-                        <p><strong>Plugin Version:</strong> <?php echo UK_YIELD_RATES_VERSION; ?></p>
+                        <p><strong>Plugin Version:</strong> <?php echo esc_html(UK_YIELD_RATES_VERSION); ?></p>
                         <p><strong>WordPress Version:</strong> <?php echo esc_html(get_bloginfo('version')); ?></p>
                         <p><strong>PHP Version:</strong> <?php echo esc_html(phpversion()); ?></p>
                         <p><strong>Active Theme:</strong> <?php echo esc_html(wp_get_theme()->get('Name')); ?></p>

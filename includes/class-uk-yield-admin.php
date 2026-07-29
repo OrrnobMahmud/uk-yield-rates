@@ -1,6 +1,11 @@
 <?php
 /**
  * Admin Settings for UK Yield Rates
+ *
+ * @package UK_Yield_Rates
+ * @version 1.3.1
+ * @license GPL-2.0-or-later
+ * @author Orrnob Mahmud
  */
 
 if (!defined('ABSPATH')) {
@@ -22,6 +27,7 @@ class UK_Yield_Admin {
         add_action('admin_menu', [$this, 'add_menu']);
         add_action('admin_init', [$this, 'register_settings']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_assets']);
+        add_action('admin_init', [$this, 'handle_settings_save']);
     }
 
     /**
@@ -42,35 +48,176 @@ class UK_Yield_Admin {
      */
     public function register_settings() {
         // API Settings
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_api_source');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_boe_custom_endpoint');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_fred_api_key');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_update_interval');
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_api_source', [
+            'sanitize_callback' => [$this, 'sanitize_api_source'],
+            'default'           => 'manual',
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_boe_custom_endpoint', [
+            'sanitize_callback' => 'esc_url_raw',
+            'default'           => '',
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_fred_api_key', [
+            'sanitize_callback' => 'sanitize_text_field',
+            'default'           => '',
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_update_interval', [
+            'sanitize_callback' => [$this, 'sanitize_interval'],
+            'default'           => '1',
+        ]);
 
         // Manual Entry Settings
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_date');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_2_yield');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_2_change');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_5_yield');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_5_change');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_10_yield');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_10_change');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_20_yield');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_20_change');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_30_yield');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_30_change');
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_date', [
+            'sanitize_callback' => 'sanitize_text_field',
+            'default'           => gmdate('Y-m-d'),
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_2_yield', [
+            'sanitize_callback' => [$this, 'sanitize_yield'],
+            'default'           => '',
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_2_change', [
+            'sanitize_callback' => [$this, 'sanitize_change'],
+            'default'           => '0',
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_5_yield', [
+            'sanitize_callback' => [$this, 'sanitize_yield'],
+            'default'           => '',
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_5_change', [
+            'sanitize_callback' => [$this, 'sanitize_change'],
+            'default'           => '0',
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_10_yield', [
+            'sanitize_callback' => [$this, 'sanitize_yield'],
+            'default'           => '',
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_10_change', [
+            'sanitize_callback' => [$this, 'sanitize_change'],
+            'default'           => '0',
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_20_yield', [
+            'sanitize_callback' => [$this, 'sanitize_yield'],
+            'default'           => '',
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_20_change', [
+            'sanitize_callback' => [$this, 'sanitize_change'],
+            'default'           => '0',
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_30_yield', [
+            'sanitize_callback' => [$this, 'sanitize_yield'],
+            'default'           => '',
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_30_change', [
+            'sanitize_callback' => [$this, 'sanitize_change'],
+            'default'           => '0',
+        ]);
 
         // Display Settings
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_default_format');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_decimal_places');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_show_change');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_show_last_updated');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_theme');
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_default_format', [
+            'sanitize_callback' => [$this, 'sanitize_format'],
+            'default'           => 'inline',
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_decimal_places', [
+            'sanitize_callback' => [$this, 'sanitize_decimal_places'],
+            'default'           => '2',
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_show_change', [
+            'sanitize_callback' => 'sanitize_text_field',
+            'default'           => 'yes',
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_show_last_updated', [
+            'sanitize_callback' => 'sanitize_text_field',
+            'default'           => 'yes',
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_theme', [
+            'sanitize_callback' => [$this, 'sanitize_theme'],
+            'default'           => 'light',
+        ]);
 
         // Advanced Settings
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_cache_duration');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_auto_refresh');
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_refresh_interval');
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_cache_duration', [
+            'sanitize_callback' => [$this, 'sanitize_cache_duration'],
+            'default'           => '1',
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_auto_refresh', [
+            'sanitize_callback' => 'sanitize_text_field',
+            'default'           => 'no',
+        ]);
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_refresh_interval', [
+            'sanitize_callback' => [$this, 'sanitize_refresh_interval'],
+            'default'           => '5',
+        ]);
+    }
+
+    /**
+     * Sanitize API source
+     */
+    public function sanitize_api_source($value) {
+        $allowed = ['manual', 'boe_direct', 'boe_custom', 'fred', 'auto'];
+        return in_array($value, $allowed, true) ? $value : 'manual';
+    }
+
+    /**
+     * Sanitize interval
+     */
+    public function sanitize_interval($value) {
+        $value = intval($value);
+        return ($value >= 1 && $value <= 24) ? (string) $value : '1';
+    }
+
+    /**
+     * Sanitize yield value
+     */
+    public function sanitize_yield($value) {
+        $value = sanitize_text_field($value);
+        return is_numeric($value) ? $value : '';
+    }
+
+    /**
+     * Sanitize change value
+     */
+    public function sanitize_change($value) {
+        $value = sanitize_text_field($value);
+        return is_numeric($value) ? $value : '0';
+    }
+
+    /**
+     * Sanitize display format
+     */
+    public function sanitize_format($value) {
+        $allowed = ['inline', 'sidebar', 'table', 'compact'];
+        return in_array($value, $allowed, true) ? $value : 'inline';
+    }
+
+    /**
+     * Sanitize decimal places
+     */
+    public function sanitize_decimal_places($value) {
+        $value = intval($value);
+        return in_array($value, [2, 3, 4], true) ? (string) $value : '2';
+    }
+
+    /**
+     * Sanitize theme
+     */
+    public function sanitize_theme($value) {
+        $allowed = ['light', 'dark'];
+        return in_array($value, $allowed, true) ? $value : 'light';
+    }
+
+    /**
+     * Sanitize cache duration
+     */
+    public function sanitize_cache_duration($value) {
+        $value = intval($value);
+        return in_array($value, [1, 4, 12, 24], true) ? (string) $value : '1';
+    }
+
+    /**
+     * Sanitize refresh interval
+     */
+    public function sanitize_refresh_interval($value) {
+        $value = intval($value);
+        return in_array($value, [5, 15, 30, 60], true) ? (string) $value : '5';
     }
 
     /**
@@ -116,6 +263,15 @@ class UK_Yield_Admin {
                 'issueOpened' => __('✓ GitHub issue page opened! Please submit the issue there.', 'uk-yield-rates'),
             ],
         ]);
+    }
+
+    /**
+     * Handle settings save - set transient for success notice
+     */
+    public function handle_settings_save() {
+        if (isset($_GET['settings-updated']) && 'true' === sanitize_text_field(wp_unslash($_GET['settings-updated']))) {
+            set_transient('uk_yield_rates_settings_notice', 'updated', 30);
+        }
     }
 
     /**

@@ -2,6 +2,11 @@
 /**
  * Cache Handler for UK Yield Rates
  * Uses WordPress Transients API for caching
+ *
+ * @package UK_Yield_Rates
+ * @version 1.3.1
+ * @license GPL-2.0-or-later
+ * @author Orrnob Mahmud
  */
 
 if (!defined('ABSPATH')) {
@@ -45,12 +50,14 @@ class UK_Yield_Cache {
             return false;
         }
 
+        // Ensure is_stale key always exists
+        $data['is_stale'] = false;
+
         // Check if cache is stale (beyond expected duration)
         $cache_time = $this->get_cache_time();
         $max_age = $this->get_cache_duration() * HOUR_IN_SECONDS;
 
         if ((time() - $cache_time) > $max_age) {
-            // Cache is stale, but still return it (will be refreshed in background)
             $data['is_stale'] = true;
         }
 
@@ -121,18 +128,6 @@ class UK_Yield_Cache {
     }
 
     /**
-     * Check if we need to refresh data
-     */
-    public function needs_refresh() {
-        if (!$this->has_cache()) {
-            return true;
-        }
-
-        $cache_info = $this->get_cache_info();
-        return $cache_info['is_stale'];
-    }
-
-    /**
      * Get yield data (from cache or fetch fresh)
      */
     public function get_yields() {
@@ -173,17 +168,5 @@ class UK_Yield_Cache {
         }
 
         return false;
-    }
-
-    /**
-     * Save manual yield data to cache
-     */
-    public function save_manual_data($yield_data) {
-        if (empty($yield_data) || !isset($yield_data['yields'])) {
-            return false;
-        }
-
-        $this->set_cached_data($yield_data);
-        return true;
     }
 }

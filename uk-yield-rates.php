@@ -3,7 +3,7 @@
  * Plugin Name: UK Yield Rates Live
  * Plugin URI: https://orrnobmahmud.com
  * Description: Display live UK government bond (gilt) yield rates using shortcodes and Gutenberg blocks. Perfect for financial advisors, mortgage brokers, and investment platforms.
- * Version: 1.1.0
+ * Version: 1.3.1
  * Author: Orrnob Mahmud Local SEO Strategist
  * Author URI: https://orrnobmahmud.com
  * License: GPL v2 or later
@@ -12,7 +12,6 @@
  * Domain Path: /languages
  * Requires at least: 5.0
  * Requires PHP: 7.4
- * WC requires at least: 5.0
  */
 
 // Prevent direct access
@@ -21,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Plugin constants
-define('UK_YIELD_RATES_VERSION', '1.1.0');
+define('UK_YIELD_RATES_VERSION', '1.3.1');
 define('UK_YIELD_RATES_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('UK_YIELD_RATES_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('UK_YIELD_RATES_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -63,6 +62,8 @@ final class UK_Yield_Rates {
         require_once UK_YIELD_RATES_PLUGIN_DIR . 'includes/class-uk-yield-shortcode.php';
         require_once UK_YIELD_RATES_PLUGIN_DIR . 'includes/class-uk-yield-admin.php';
         require_once UK_YIELD_RATES_PLUGIN_DIR . 'includes/class-uk-yield-block.php';
+        require_once UK_YIELD_RATES_PLUGIN_DIR . 'includes/class-uk-yield-boe-provider.php';
+        require_once UK_YIELD_RATES_PLUGIN_DIR . 'includes/class-uk-yield-import-handler.php';
     }
 
     /**
@@ -76,13 +77,13 @@ final class UK_Yield_Rates {
         register_activation_hook(__FILE__, [$this, 'activate']);
         register_deactivation_hook(__FILE__, [$this, 'deactivate']);
 
-        // Load text domain
-        add_action('plugins_loaded', [$this, 'load_textdomain']);
-
         // AJAX handlers
         add_action('wp_ajax_uk_yield_refresh_cache', [$this, 'ajax_refresh_cache']);
         add_action('wp_ajax_uk_yield_refresh', [$this, 'ajax_refresh_yields']);
+        add_action('wp_ajax_nopriv_uk_yield_refresh', [$this, 'ajax_refresh_yields']);
         add_action('wp_ajax_uk_yield_render_preview', [$this, 'ajax_render_preview']);
+        add_action('wp_ajax_uk_yield_import_file', [$this, 'ajax_import_file']);
+        add_action('wp_ajax_uk_yield_auto_download', [$this, 'ajax_auto_download']);
 
         // Enqueue frontend scripts
         add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_scripts']);
@@ -129,7 +130,7 @@ final class UK_Yield_Rates {
      */
     public function ajax_refresh_cache() {
         // Verify nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'uk_yield_rates_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'uk_yield_rates_nonce')) {
             wp_send_json_error(__('Security check failed.', 'uk-yield-rates'));
         }
 
@@ -153,7 +154,7 @@ final class UK_Yield_Rates {
      */
     public function ajax_refresh_yields() {
         // Verify nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'uk_yield_rates_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'uk_yield_rates_nonce')) {
             wp_send_json_error(__('Security check failed.', 'uk-yield-rates'));
         }
 
@@ -166,8 +167,8 @@ final class UK_Yield_Rates {
 
         // Render shortcodes
         $shortcode_atts = [
-            'maturity' => sanitize_text_field($_POST['maturity'] ?? 'all'),
-            'format' => sanitize_text_field($_POST['format'] ?? 'inline'),
+            'maturity' => sanitize_text_field(wp_unslash($_POST['maturity'] ?? 'all')),
+            'format' => sanitize_text_field(wp_unslash($_POST['format'] ?? 'inline')),
             'show_change' => 'yes',
             'show_updated' => 'yes',
             'decimal' => get_option('uk_yield_rates_decimal_places', '2'),
@@ -184,11 +185,11 @@ final class UK_Yield_Rates {
      */
     public function ajax_render_preview() {
         // Verify nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'uk_yield_rates_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'uk_yield_rates_nonce')) {
             wp_send_json_error(__('Security check failed.', 'uk-yield-rates'));
         }
 
-        $shortcode = sanitize_text_field($_POST['shortcode'] ?? '');
+        $shortcode = sanitize_text_field(wp_unslash($_POST['shortcode'] ?? ''));
 
         if (empty($shortcode)) {
             wp_send_json_error(__('No shortcode provided.', 'uk-yield-rates'));
@@ -221,6 +222,54 @@ final class UK_Yield_Rates {
     }
 
     /**
+     * AJAX: Import file (ZIP, XLSX, CSV)
+     */
+    public function ajax_import_file() {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'uk_yield_rates_nonce')) {
+            wp_send_json_error(__('Security check failed.', 'uk-yield-rates'));
+        }
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(__('Insufficient permissions.', 'uk-yield-rates'));
+        }
+
+        if (!isset($_FILES['yield_file'])) {
+            wp_send_json_error(__('No file uploaded.', 'uk-yield-rates'));
+        }
+
+        $import_handler = UK_Yield_Import_Handler::get_instance();
+        $result = $import_handler->handle_upload($_FILES['yield_file']);
+
+        if ($result['success']) {
+            wp_send_json_success($result);
+        } else {
+            wp_send_json_error($result['message']);
+        }
+    }
+
+    /**
+     * AJAX: Auto download from BoE
+     */
+    public function ajax_auto_download() {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'uk_yield_rates_nonce')) {
+            wp_send_json_error(__('Security check failed.', 'uk-yield-rates'));
+        }
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(__('Insufficient permissions.', 'uk-yield-rates'));
+        }
+
+        $import_handler = UK_Yield_Import_Handler::get_instance();
+        $result = $import_handler->auto_download_boe();
+
+        if ($result['success']) {
+            wp_send_json_success($result);
+        } else {
+            wp_send_json_error($result['message']);
+        }
+    }
+
+    /**
      * Plugin activation
      */
     public function activate() {
@@ -236,7 +285,7 @@ final class UK_Yield_Rates {
             'theme' => 'light',
             'auto_refresh' => 'no',
             'refresh_interval' => '5', // minutes
-            'manual_date' => date('Y-m-d'),
+            'manual_date' => gmdate('Y-m-d'),
         ];
 
         foreach ($defaults as $key => $value) {
@@ -283,12 +332,6 @@ final class UK_Yield_Rates {
         flush_rewrite_rules();
     }
 
-    /**
-     * Load plugin textdomain
-     */
-    public function load_textdomain() {
-        load_plugin_textdomain('uk-yield-rates', false, dirname(UK_YIELD_RATES_PLUGIN_BASENAME) . '/languages');
-    }
 }
 
 // Initialize plugin

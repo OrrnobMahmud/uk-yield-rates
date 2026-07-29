@@ -187,7 +187,6 @@ uk-yield-rates/
 │   └── js/
 │       └── yield-rates.js    # Frontend JavaScript
 ├── sample-endpoint/           # Example Cloudflare Worker
-├── templates/                 # Template files
 ├── CHANGELOG.md              # Changelog
 ├── CONTRIBUTING.md           # This file
 ├── LICENSE                   # GPL v2 license

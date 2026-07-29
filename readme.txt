@@ -1,15 +1,15 @@
 === UK Yield Rates Live ===
 Contributors: orrnobmahmud
 Donate link: https://orrnobmahmud.com
-Tags: yield rates, gilts, bonds, finance, uk, mortgage, rates, real-estate, investment
+Tags: yield rates, gilts, bonds, finance, uk
 Requires at least: 5.0
-Tested up to: 6.6
-Stable tag: 1.1.0
+Tested up to: 7.0
+Stable tag: 1.3.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Display live UK government bond (gilt) yield rates using shortcodes and Gutenberg blocks. Perfect for financial advisors, mortgage brokers, and investment platforms.
+Display live UK gilt yield rates using shortcodes and Gutenberg blocks.
 
 == Description ==
 
@@ -118,6 +118,20 @@ Yes! Go to Settings > UK Yield Rates and click "Request Feature on GitHub". Desc
 
 == Changelog ==
 
+= 1.3.1 =
+* Fixed auto-refresh not working for anonymous (logged-out) visitors
+
+= 1.3.0 =
+* **NEW:** Automatic BoE ZIP download and Excel parsing
+* **NEW:** File upload import for ZIP, XLSX, and CSV files
+* **NEW:** Unified provider interface for all data sources
+* Cloudflare Worker marked experimental
+
+= 1.2.0 =
+* Fixed wp_localize_script handle mismatch (frontend and admin)
+* Fixed version constant mismatch
+* Fixed build script packaging
+
 = 1.1.0 =
 * **NEW:** Text style inheritance - yields inherit font styles from parent elements
 * **NEW:** GitHub bug reporting - report bugs directly from admin
@@ -146,6 +160,15 @@ Yes! Go to Settings > UK Yield Rates and click "Request Feature on GitHub". Desc
 * Auto-refresh functionality
 
 == Upgrade Notice ==
+
+= 1.3.1 =
+Fixes auto-refresh for anonymous visitors.
+
+= 1.3.0 =
+Automatic BoE data download and file upload import.
+
+= 1.2.0 =
+Critical fixes for script loading and version constants.
 
 = 1.1.0 =
 Major update with text inheritance, GitHub integration, and improved UI.
