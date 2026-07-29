@@ -19,7 +19,7 @@ mkdir "%BUILD_DIR%"
 
 REM Copy plugin files (excluding development files)
 echo 📦 Copying plugin files...
-xcopy /E /I /Y /Q ".\*" "%BUILD_DIR%\" /EXCLUDE:exclude.txt 2>nul
+xcopy /E /I /Y /Q ".\*" "%BUILD_DIR%\"
 
 REM Manually exclude specific folders
 if exist "%BUILD_DIR%\node_modules" rmdir /s /q "%BUILD_DIR%\node_modules"

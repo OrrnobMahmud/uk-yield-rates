@@ -21,3 +21,7 @@ npm-debug.log*
 # Temp files
 tmp/
 temp/
+
+# Release artifacts
+releases/
+*.zip

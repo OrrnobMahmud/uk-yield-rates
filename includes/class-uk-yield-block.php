@@ -46,12 +46,15 @@ class UK_Yield_Block {
      * Enqueue block assets
      */
     public function enqueue_block_assets($hook) {
+        $asset_file = UK_YIELD_RATES_PLUGIN_DIR . 'blocks/yield-rates/dist/index.asset.php';
+        $asset = file_exists($asset_file) ? require $asset_file : ['dependencies' => [], 'version' => UK_YIELD_RATES_VERSION];
+
         // Editor script
         wp_enqueue_script(
             'uk-yield-block-editor',
-            UK_YIELD_RATES_PLUGIN_URL . 'blocks/yield-rates/index.js',
-            ['wp-blocks', 'wp-element', 'wp-editor', 'wp-components', 'wp-data', 'wp-api-fetch'],
-            UK_YIELD_RATES_VERSION,
+            UK_YIELD_RATES_PLUGIN_URL . 'blocks/yield-rates/dist/index.js',
+            $asset['dependencies'],
+            $asset['version'],
             true
         );
 

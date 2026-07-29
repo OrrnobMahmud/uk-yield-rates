@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Plugin constants
-define('UK_YIELD_RATES_VERSION', '1.0.0');
+define('UK_YIELD_RATES_VERSION', '1.1.0');
 define('UK_YIELD_RATES_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('UK_YIELD_RATES_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('UK_YIELD_RATES_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -116,7 +116,7 @@ final class UK_Yield_Rates {
             true
         );
 
-        wp_localize_script('uk_yield_rates', 'ukYieldRates', [
+        wp_localize_script('uk-yield-rates', 'ukYieldRates', [
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('uk_yield_rates_nonce'),
             'auto_refresh' => get_option('uk_yield_rates_auto_refresh', 'no'),

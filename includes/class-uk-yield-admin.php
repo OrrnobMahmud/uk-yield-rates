@@ -96,7 +96,7 @@ class UK_Yield_Admin {
             true
         );
 
-        wp_localize_script('uk_yield_admin', 'ukYieldAdmin', [
+        wp_localize_script('uk-yield-admin', 'ukYieldAdmin', [
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('uk_yield_rates_nonce'),
             'pluginVersion' => UK_YIELD_RATES_VERSION,
