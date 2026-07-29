@@ -3,7 +3,7 @@
  * Admin Settings for UK Yield Rates
  *
  * @package UK_Yield_Rates
- * @version 1.3.1
+ * @version 1.3.2
  * @license GPL-2.0-or-later
  * @author Orrnob Mahmud
  */

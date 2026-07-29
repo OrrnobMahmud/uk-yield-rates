@@ -1,6 +1,6 @@
 # UK Yield Rates Live
 
-[![Version](https://img.shields.io/badge/version-1.3.1-blue.svg)](https://github.com/OrrnobMahmud/uk-yield-rates/releases)
+[![Version](https://img.shields.io/badge/version-1.3.2-blue.svg)](https://github.com/OrrnobMahmud/uk-yield-rates/releases)
 [![License](https://img.shields.io/badge/license-GPL%20v2%2B-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![PHP Version](https://img.shields.io/badge/php-7.4%2B-purple.svg)](https://php.net)
 
@@ -216,6 +216,9 @@ Features:
 ---
 
 ## 🔄 Changelog
+
+### 1.3.2 (2026-07-30)
+- Fixed dark theme CSS class not applied to shortcode output
 
 ### 1.3.1 (2026-07-30)
 - Fixed auto-refresh not working for anonymous visitors

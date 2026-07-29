@@ -4,7 +4,7 @@ Donate link: https://orrnobmahmud.com
 Tags: yield rates, gilts, bonds, finance, uk
 Requires at least: 5.0
 Tested up to: 7.0
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -120,6 +120,9 @@ Yes! Go to Settings > UK Yield Rates and click "Request Feature on GitHub". Desc
 
 == Changelog ==
 
+= 1.3.2 =
+* Fixed dark theme CSS class not applied to shortcode output
+
 = 1.3.1 =
 * Fixed auto-refresh not working for anonymous (logged-out) visitors
 
@@ -162,6 +165,9 @@ Yes! Go to Settings > UK Yield Rates and click "Request Feature on GitHub". Desc
 * Auto-refresh functionality
 
 == Upgrade Notice ==
+
+= 1.3.2 =
+Fixes dark theme not working with shortcodes.
 
 = 1.3.1 =
 Fixes auto-refresh for anonymous visitors.

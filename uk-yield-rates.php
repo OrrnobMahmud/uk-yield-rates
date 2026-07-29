@@ -3,7 +3,7 @@
  * Plugin Name: UK Yield Rates Live
  * Plugin URI: https://orrnobmahmud.com
  * Description: Display live UK government bond (gilt) yield rates using shortcodes and Gutenberg blocks. Perfect for financial advisors, mortgage brokers, and investment platforms.
- * Version: 1.3.1
+ * Version: 1.3.2
  * Author: Orrnob Mahmud Local SEO Strategist
  * Author URI: https://orrnobmahmud.com
  * License: GPL v2 or later
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Plugin constants
-define('UK_YIELD_RATES_VERSION', '1.3.1');
+define('UK_YIELD_RATES_VERSION', '1.3.2');
 define('UK_YIELD_RATES_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('UK_YIELD_RATES_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('UK_YIELD_RATES_PLUGIN_BASENAME', plugin_basename(__FILE__));
