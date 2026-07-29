@@ -20,10 +20,11 @@ UK Yield Rates Live is a WordPress plugin that displays real-time UK government 
 **Features:**
 
 * **Text Style Inheritance** - Yields inherit font weight, size, and color from parent elements
-* **Multiple Data Sources** - Manual entry (recommended), BoE custom endpoint, or FRED API
+* **Multiple Data Sources** - Manual entry (recommended), BoE direct download, BoE custom endpoint, or FRED API
 * **Multiple Display Formats** - Inline, sidebar widget, table, and compact layouts
 * **Gutenberg Block** - Visual editor with live preview and theme preview
 * **Shortcode Support** - Works with classic editor and page builders
+* **File Import** - Upload Bank of England ZIP archives, Excel, or CSV files
 * **Auto-Refresh** - Optional AJAX-based automatic updates
 * **Responsive Design** - Looks great on all devices
 * **Light/Dark Themes** - Match your site's design
@@ -74,12 +75,13 @@ Yes! Use these attributes:
 * `maturity` - "all", "2", "5", "10", "20", "30", or comma-separated (e.g., "2,5,10")
 * `format` - "inline", "sidebar", "table", or "compact"
 * `show_change` - "yes" or "no"
+* `show_updated` - "yes" or "no"
 * `decimal` - "2", "3", or "4"
 * `theme` - "light" or "dark"
 
 = Do I need an API key? =
 
-No API key is required. The recommended method is **Manual Entry** - just enter yields from the Bank of England website once a week. For automatic updates, you can set up a free BoE Custom Endpoint (Cloudflare Workers or Vercel) or use the free FRED API.
+No API key is required. The recommended method is **Manual Entry** - just enter yields from the Bank of England website once a week. For automatic updates, you can use the built-in **BoE Direct Download** (free, no setup required), set up a free BoE Custom Endpoint (Cloudflare Workers or Vercel), or use the free FRED API.
 
 = How often is the data updated? =
 

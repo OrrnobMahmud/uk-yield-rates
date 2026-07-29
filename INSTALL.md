@@ -93,10 +93,12 @@ mklink /D "C:\path\to\wordpress\wp-content\plugins\uk-yield-rates" "C:\path\to\u
 1. Go to **Settings > UK Yield Rates**
 2. Configure your preferred data source:
    - **Manual Entry** (Recommended) - Enter yields manually
-   - **BoE Custom Endpoint** - Automatic updates
+   - **BoE Direct Download** (Automatic) - Free automatic updates from Bank of England
+   - **BoE Custom Endpoint** - Automatic updates via Cloudflare/Vercel
    - **FRED API** - Free API option
-3. Set your display preferences
-4. Use shortcodes or Gutenberg block to display yields
+3. You can also import data from Bank of England ZIP archives, Excel, or CSV files via the Import section
+4. Set your display preferences
+5. Use shortcodes or Gutenberg block to display yields
 
 ## Shortcode Usage
 
@@ -112,6 +114,9 @@ mklink /D "C:\path\to\wordpress\wp-content\plugins\uk-yield-rates" "C:\path\to\u
 
 // Sidebar widget
 [uk_yield_rates format="sidebar"]
+
+// With all options
+[uk_yield_rates inline="yes" maturity="10" format="inline" show_change="yes" show_updated="yes" decimal="2" theme="light"]
 ```
 
 ## Troubleshooting
@@ -132,7 +137,8 @@ mklink /D "C:\path\to\wordpress\wp-content\plugins\uk-yield-rates" "C:\path\to\u
 
 1. Go to **Settings > UK Yield Rates**
 2. Make sure you've entered yield data (if using Manual mode)
-3. Check that your shortcode is correct
+3. If using BoE Direct Download, ensure PHP Zip extension is enabled
+4. Check that your shortcode is correct
 
 ## Need Help?
 

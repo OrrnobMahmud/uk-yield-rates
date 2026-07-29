@@ -416,7 +416,14 @@ $uk_yield_rates_cache_info = $uk_yield_rates_cache->get_cache_info();
                 <li><?php echo esc_html__('Update once weekly - all pages auto-update!', 'uk-yield-rates'); ?></li>
             </ol>
 
-            <h3><?php echo esc_html__('Option B: Automatic Updates with FRED API (Free)', 'uk-yield-rates'); ?></h3>
+            <h3><?php echo esc_html__('Option B: Automatic Updates with BoE Direct Download (Free)', 'uk-yield-rates'); ?></h3>
+            <ol>
+                <li><?php echo esc_html__('Select "BoE Direct Download" as data source above', 'uk-yield-rates'); ?></li>
+                <li><?php echo esc_html__('Click "Save Changes"', 'uk-yield-rates'); ?></li>
+                <li><?php echo esc_html__('The plugin will automatically fetch rates from the Bank of England', 'uk-yield-rates'); ?></li>
+            </ol>
+
+            <h3><?php echo esc_html__('Option C: Automatic Updates with FRED API (Free)', 'uk-yield-rates'); ?></h3>
             <ol>
                 <li><?php echo esc_html__('Go to https://fred.stlouisfed.org/docs/api/api_key.html', 'uk-yield-rates'); ?></li>
                 <li><?php echo esc_html__('Sign up for a free API key', 'uk-yield-rates'); ?></li>
@@ -446,12 +453,12 @@ $uk_yield_rates_cache_info = $uk_yield_rates_cache->get_cache_info();
         <div class="uk-yield-quickstart">
             <h3><?php echo esc_html__('Step 3: Update Rates (When They Change)', 'uk-yield-rates'); ?></h3>
             <ol>
-                <li><?php echo esc_html__('Check the Bank of England yield curves page periodically', 'uk-yield-rates'); ?></li>
+                <li><?php echo esc_html__('If using Manual Entry, check the Bank of England yield curves page periodically', 'uk-yield-rates'); ?></li>
                 <li><?php echo esc_html__('Update the rates in the plugin settings', 'uk-yield-rates'); ?></li>
-                <li><?php echo esc_html__('All your pages will automatically show the new rates!', 'uk-yield-rates'); ?></li>
+                <li><?php echo esc_html__('If using BoE Direct Download or FRED API, rates update automatically!', 'uk-yield-rates'); ?></li>
             </ol>
 
-            <p><strong><?php echo esc_html__('Pro Tip:', 'uk-yield-rates'); ?></strong> <?php echo esc_html__('Set a calendar reminder to update rates weekly or whenever Bank of England announces changes.', 'uk-yield-rates'); ?></p>
+            <p><strong><?php echo esc_html__('Pro Tip:', 'uk-yield-rates'); ?></strong> <?php echo esc_html__('For Manual Entry, set a calendar reminder to update rates weekly or whenever Bank of England announces changes.', 'uk-yield-rates'); ?></p>
         </div>
     </div>
 
@@ -459,13 +466,14 @@ $uk_yield_rates_cache_info = $uk_yield_rates_cache->get_cache_info();
         <h2><?php echo esc_html__('Shortcode Reference', 'uk-yield-rates'); ?></h2>
         <div class="uk-yield-examples">
             <h3><?php echo esc_html__('All Available Options', 'uk-yield-rates'); ?></h3>
-            <code>[uk_yield_rates inline="yes" maturity="10" format="inline" show_change="yes" decimal="2" theme="light"]</code>
+            <code>[uk_yield_rates inline="yes" maturity="10" format="inline" show_change="yes" show_updated="yes" decimal="2" theme="light"]</code>
 
             <p><strong><?php echo esc_html__('Attributes:', 'uk-yield-rates'); ?></strong></p>
             <ul>
                 <li><code>maturity</code> - <?php echo esc_html__('all, 2, 5, 10, 20, 30 (or comma-separated)', 'uk-yield-rates'); ?></li>
                 <li><code>format</code> - <?php echo esc_html__('inline, sidebar, table, compact', 'uk-yield-rates'); ?></li>
                 <li><code>show_change</code> - <?php echo esc_html__('yes, no', 'uk-yield-rates'); ?></li>
+                <li><code>show_updated</code> - <?php echo esc_html__('yes, no', 'uk-yield-rates'); ?></li>
                 <li><code>decimal</code> - <?php echo esc_html__('2, 3, 4', 'uk-yield-rates'); ?></li>
                 <li><code>theme</code> - <?php echo esc_html__('light, dark', 'uk-yield-rates'); ?></li>
             </ul>

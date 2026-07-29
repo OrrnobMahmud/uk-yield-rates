@@ -23,8 +23,10 @@ The shortcode **automatically inherits text styles** from its surrounding contex
 
 ### Multiple Data Sources 📊
 - **Manual Entry** (Recommended) - Most reliable, FREE
-- **BoE Custom Endpoint** - Free with Cloudflare/Vercel
+- **BoE Direct Download** (Automatic - FREE) - Official Bank of England data
+- **BoE Custom Endpoint** - Free with Cloudflare/Vercel (experimental)
 - **FRED API** - Free tier available
+- **File Import** - Upload ZIP, XLSX, or CSV files
 - **Auto Mode** - Tries all sources with fallback
 
 ### Display Formats 🎨
@@ -140,6 +142,7 @@ The yield will inherit the header's font weight, size, and color!
 | `format` | inline, sidebar, table, compact | inline | Display format |
 | `inline` | yes, no | no | Force inline display |
 | `show_change` | yes, no | yes | Show change indicator (↑↓→) |
+| `show_updated` | yes, no | yes | Show last updated timestamp |
 | `decimal` | 2, 3, 4 | 2 | Decimal places |
 | `theme` | light, dark | light | Color theme |
 
