@@ -8,8 +8,8 @@
  * @author Orrnob Mahmud
  */
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 // Get current settings

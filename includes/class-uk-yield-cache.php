@@ -9,8 +9,8 @@
  * @author Orrnob Mahmud
  */
 
-if (!defined('ABSPATH')) {
-    exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 class UK_Yield_Cache {
