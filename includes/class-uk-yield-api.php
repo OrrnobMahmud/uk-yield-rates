@@ -118,15 +118,15 @@ class UK_Yield_API {
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
 
-        if (!$data || !isset($data['data'])) {
+        if (!$data || !isset($data['yield_pct'])) {
             return false;
         }
 
         return [
             'maturity' => $maturity,
-            'yield' => floatval($data['data']['yield']),
+            'yield' => floatval($data['yield_pct']),
             'change' => 0,
-            'date' => $data['data']['date'] ?? gmdate('Y-m-d'),
+            'date' => $data['date'] ?? gmdate('Y-m-d'),
         ];
     }
 
@@ -154,17 +154,17 @@ class UK_Yield_API {
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
 
-        if (!$data || !isset($data['data']['curve']) || !is_array($data['data']['curve'])) {
+        if (!$data || !isset($data['curve']) || !is_array($data['curve'])) {
             return false;
         }
 
         $yields = [];
-        foreach ($data['data']['curve'] as $item) {
+        foreach ($data['curve'] as $item) {
             $yields[$item['maturity']] = [
                 'maturity' => $item['maturity'],
                 'yield' => floatval($item['yield']),
                 'change' => 0,
-                'date' => $data['data']['date'] ?? gmdate('Y-m-d'),
+                'date' => $data['date'] ?? gmdate('Y-m-d'),
             ];
         }
 
