@@ -3,7 +3,7 @@
  * Plugin Name: UK Yield Rates Live
  * Plugin URI: https://orrnobmahmud.com
  * Description: Display live UK government bond (gilt) yield rates using shortcodes and Gutenberg blocks. Perfect for financial advisors, mortgage brokers, and investment platforms.
- * Version: 1.3.2
+ * Version: 2.0.0
  * Author: Orrnob Mahmud Local SEO Strategist
  * Author URI: https://orrnobmahmud.com
  * License: GPL v2 or later
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Plugin constants
-define('UK_YIELD_RATES_VERSION', '1.3.2');
+define('UK_YIELD_RATES_VERSION', '2.0.0');
 define('UK_YIELD_RATES_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('UK_YIELD_RATES_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('UK_YIELD_RATES_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -62,8 +62,6 @@ final class UK_Yield_Rates {
         require_once UK_YIELD_RATES_PLUGIN_DIR . 'includes/class-uk-yield-shortcode.php';
         require_once UK_YIELD_RATES_PLUGIN_DIR . 'includes/class-uk-yield-admin.php';
         require_once UK_YIELD_RATES_PLUGIN_DIR . 'includes/class-uk-yield-block.php';
-        require_once UK_YIELD_RATES_PLUGIN_DIR . 'includes/class-uk-yield-boe-provider.php';
-        require_once UK_YIELD_RATES_PLUGIN_DIR . 'includes/class-uk-yield-import-handler.php';
     }
 
     /**
@@ -82,8 +80,6 @@ final class UK_Yield_Rates {
         add_action('wp_ajax_uk_yield_refresh', [$this, 'ajax_refresh_yields']);
         add_action('wp_ajax_nopriv_uk_yield_refresh', [$this, 'ajax_refresh_yields']);
         add_action('wp_ajax_uk_yield_render_preview', [$this, 'ajax_render_preview']);
-        add_action('wp_ajax_uk_yield_import_file', [$this, 'ajax_import_file']);
-        add_action('wp_ajax_uk_yield_auto_download', [$this, 'ajax_auto_download']);
 
         // Enqueue frontend scripts
         add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_scripts']);
@@ -222,93 +218,26 @@ final class UK_Yield_Rates {
     }
 
     /**
-     * AJAX: Import file (ZIP, XLSX, CSV)
-     */
-    public function ajax_import_file() {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'uk_yield_rates_nonce')) {
-            wp_send_json_error(__('Security check failed.', 'uk-yield-rates'));
-        }
-
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Insufficient permissions.', 'uk-yield-rates'));
-        }
-
-        if (!isset($_FILES['yield_file'])) {
-            wp_send_json_error(__('No file uploaded.', 'uk-yield-rates'));
-        }
-
-        $import_handler = UK_Yield_Import_Handler::get_instance();
-        $result = $import_handler->handle_upload($_FILES['yield_file']);
-
-        if ($result['success']) {
-            wp_send_json_success($result);
-        } else {
-            wp_send_json_error($result['message']);
-        }
-    }
-
-    /**
-     * AJAX: Auto download from BoE
-     */
-    public function ajax_auto_download() {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'uk_yield_rates_nonce')) {
-            wp_send_json_error(__('Security check failed.', 'uk-yield-rates'));
-        }
-
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(__('Insufficient permissions.', 'uk-yield-rates'));
-        }
-
-        $import_handler = UK_Yield_Import_Handler::get_instance();
-        $result = $import_handler->auto_download_boe();
-
-        if ($result['success']) {
-            wp_send_json_success($result);
-        } else {
-            wp_send_json_error($result['message']);
-        }
-    }
-
-    /**
      * Plugin activation
      */
     public function activate() {
         // Set default options
         $defaults = [
-            'api_source' => 'manual', // manual, fred, auto
-            'update_interval' => '1', // hours
-            'cache_duration' => '1', // hours
+            'api_url' => '',
+            'api_key' => '',
             'default_format' => 'inline',
             'decimal_places' => '2',
             'show_change' => 'yes',
             'show_last_updated' => 'yes',
             'theme' => 'light',
+            'cache_duration' => '1',
             'auto_refresh' => 'no',
-            'refresh_interval' => '5', // minutes
-            'manual_date' => gmdate('Y-m-d'),
+            'refresh_interval' => '5',
         ];
 
         foreach ($defaults as $key => $value) {
             if (get_option('uk_yield_rates_' . $key) === false) {
                 update_option('uk_yield_rates_' . $key, $value);
-            }
-        }
-
-        // Set default manual yield values
-        $manual_defaults = [
-            '2' => ['yield' => '', 'change' => '0'],
-            '5' => ['yield' => '', 'change' => '0'],
-            '10' => ['yield' => '', 'change' => '0'],
-            '20' => ['yield' => '', 'change' => '0'],
-            '30' => ['yield' => '', 'change' => '0'],
-        ];
-
-        foreach ($manual_defaults as $maturity => $values) {
-            if (get_option('uk_yield_rates_manual_' . $maturity . '_yield') === false) {
-                update_option('uk_yield_rates_manual_' . $maturity . '_yield', $values['yield']);
-            }
-            if (get_option('uk_yield_rates_manual_' . $maturity . '_change') === false) {
-                update_option('uk_yield_rates_manual_' . $maturity . '_change', $values['change']);
             }
         }
 

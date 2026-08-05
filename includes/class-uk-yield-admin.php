@@ -3,7 +3,7 @@
  * Admin Settings for UK Yield Rates
  *
  * @package UK_Yield_Rates
- * @version 1.3.2
+ * @version 2.0.0
  * @license GPL-2.0-or-later
  * @author Orrnob Mahmud
  */
@@ -48,67 +48,13 @@ class UK_Yield_Admin {
      */
     public function register_settings() {
         // API Settings
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_api_source', [
-            'sanitize_callback' => [$this, 'sanitize_api_source'],
-            'default'           => 'manual',
-        ]);
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_boe_custom_endpoint', [
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_api_url', [
             'sanitize_callback' => 'esc_url_raw',
             'default'           => '',
         ]);
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_fred_api_key', [
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_api_key', [
             'sanitize_callback' => 'sanitize_text_field',
             'default'           => '',
-        ]);
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_update_interval', [
-            'sanitize_callback' => [$this, 'sanitize_interval'],
-            'default'           => '1',
-        ]);
-
-        // Manual Entry Settings
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_date', [
-            'sanitize_callback' => 'sanitize_text_field',
-            'default'           => gmdate('Y-m-d'),
-        ]);
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_2_yield', [
-            'sanitize_callback' => [$this, 'sanitize_yield'],
-            'default'           => '',
-        ]);
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_2_change', [
-            'sanitize_callback' => [$this, 'sanitize_change'],
-            'default'           => '0',
-        ]);
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_5_yield', [
-            'sanitize_callback' => [$this, 'sanitize_yield'],
-            'default'           => '',
-        ]);
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_5_change', [
-            'sanitize_callback' => [$this, 'sanitize_change'],
-            'default'           => '0',
-        ]);
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_10_yield', [
-            'sanitize_callback' => [$this, 'sanitize_yield'],
-            'default'           => '',
-        ]);
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_10_change', [
-            'sanitize_callback' => [$this, 'sanitize_change'],
-            'default'           => '0',
-        ]);
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_20_yield', [
-            'sanitize_callback' => [$this, 'sanitize_yield'],
-            'default'           => '',
-        ]);
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_20_change', [
-            'sanitize_callback' => [$this, 'sanitize_change'],
-            'default'           => '0',
-        ]);
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_30_yield', [
-            'sanitize_callback' => [$this, 'sanitize_yield'],
-            'default'           => '',
-        ]);
-        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_30_change', [
-            'sanitize_callback' => [$this, 'sanitize_change'],
-            'default'           => '0',
         ]);
 
         // Display Settings
@@ -146,38 +92,6 @@ class UK_Yield_Admin {
             'sanitize_callback' => [$this, 'sanitize_refresh_interval'],
             'default'           => '5',
         ]);
-    }
-
-    /**
-     * Sanitize API source
-     */
-    public function sanitize_api_source($value) {
-        $allowed = ['manual', 'boe_direct', 'boe_custom', 'fred', 'auto'];
-        return in_array($value, $allowed, true) ? $value : 'manual';
-    }
-
-    /**
-     * Sanitize interval
-     */
-    public function sanitize_interval($value) {
-        $value = intval($value);
-        return ($value >= 1 && $value <= 24) ? (string) $value : '1';
-    }
-
-    /**
-     * Sanitize yield value
-     */
-    public function sanitize_yield($value) {
-        $value = sanitize_text_field($value);
-        return is_numeric($value) ? $value : '';
-    }
-
-    /**
-     * Sanitize change value
-     */
-    public function sanitize_change($value) {
-        $value = sanitize_text_field($value);
-        return is_numeric($value) ? $value : '0';
     }
 
     /**

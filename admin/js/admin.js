@@ -13,177 +13,13 @@ jQuery(document).ready(function($) {
         $(target).addClass('active');
     });
 
-    // Show/hide sections based on data source selection
-    $('#uk-yield-data-source').on('change', function() {
-        var source = $(this).val();
-
-        // Hide all sections first
-        $('#uk-yield-manual-entry').hide();
-        $('#uk-yield-boe-direct-settings').hide();
-        $('#uk-yield-boe-custom-settings').hide();
-        $('#uk-yield-fred-settings').hide();
-
-        // Show relevant section
-        if (source === 'manual') {
-            $('#uk-yield-manual-entry').show();
-        } else if (source === 'boe_direct') {
-            $('#uk-yield-boe-direct-settings').show();
-            $('#uk-yield-manual-entry').show();
-        } else if (source === 'boe_custom') {
-            $('#uk-yield-boe-custom-settings').show();
-        } else if (source === 'fred') {
-            $('#uk-yield-fred-settings').show();
-        } else if (source === 'auto') {
-            // Show manual entry in auto mode (primary source)
-            $('#uk-yield-manual-entry').show();
-        }
-    });
-
-    // Manual entry field validation
-    function validateManualEntry() {
-        var isValid = true;
-        var errors = [];
-
-        // Check if at least one yield value is entered
-        var hasAnyYield = false;
-        var maturities = ['2', '5', '10', '20', '30'];
-
-        maturities.forEach(function(maturity) {
-            var yieldValue = $('input[name="uk_yield_rates_manual_' + maturity + '_yield"]').val();
-            if (yieldValue !== '' && yieldValue !== null) {
-                hasAnyYield = true;
-
-                // Validate numeric value
-                if (isNaN(parseFloat(yieldValue)) || !isFinite(yieldValue)) {
-                    errors.push('Invalid yield value for ' + maturity + '-Year');
-                    isValid = false;
-                } else if (parseFloat(yieldValue) < 0 || parseFloat(yieldValue) > 100) {
-                    errors.push('Yield value for ' + maturity + '-Year must be between 0 and 100');
-                    isValid = false;
-                }
-
-                // Validate change value
-                var changeValue = $('input[name="uk_yield_rates_manual_' + maturity + '_change"]').val();
-                if (changeValue !== '' && changeValue !== null && changeValue !== '0') {
-                    if (isNaN(parseFloat(changeValue)) || !isFinite(changeValue)) {
-                        errors.push('Invalid change value for ' + maturity + '-Year');
-                        isValid = false;
-                    }
-                }
-            }
-        });
-
-        // Check date field
-        var dateValue = $('input[name="uk_yield_rates_manual_date"]').val();
-        if (!dateValue) {
-            errors.push('Data date is required');
-            isValid = false;
-        }
-
-        if (!hasAnyYield) {
-            errors.push('At least one yield value must be entered');
-            isValid = false;
-        }
-
-        return {
-            isValid: isValid,
-            errors: errors
-        };
-    }
-
-    // Show validation errors
-    function showValidationErrors(errors) {
-        // Remove existing error messages
-        $('.uk-yield-validation-errors').remove();
-
-        if (errors.length > 0) {
-            var errorHtml = '<div class="uk-yield-validation-errors" style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px 16px; margin: 12px 0; color: #dc2626;">';
-            errorHtml += '<strong style="display: block; margin-bottom: 8px;">⚠️ Validation Errors:</strong>';
-            errorHtml += '<ul style="margin: 0; padding-left: 20px;">';
-            errors.forEach(function(error) {
-                errorHtml += '<li>' + error + '</li>';
-            });
-            errorHtml += '</ul></div>';
-
-            // Insert before submit button
-            $('.uk-yield-manual-section').append(errorHtml);
-
-            // Scroll to errors
-            $('html, body').animate({
-                scrollTop: $('.uk-yield-validation-errors').offset().top - 50
-            }, 500);
-        }
-    }
-
-    // Form submission with validation
-    $('form').on('submit', function(e) {
-        var source = $('#uk-yield-data-source').val();
-
-        // Only validate manual entry if it's selected
-        if (source === 'manual' || source === 'auto') {
-            var validation = validateManualEntry();
-
-            if (!validation.isValid) {
-                e.preventDefault();
-                showValidationErrors(validation.errors);
-                return false;
-            }
-        }
-
-        // Show saving indicator
-        var $submitBtn = $(this).find('input[type="submit"], button[type="submit"]');
-        var originalText = $submitBtn.val() || $submitBtn.text();
-        $submitBtn.prop('disabled', true).val('Saving...').text('Saving...');
-
-        // Re-enable after 3 seconds in case of error
-        setTimeout(function() {
-            $submitBtn.prop('disabled', false).val(originalText).text(originalText);
-        }, 3000);
-    });
-
-    // Real-time validation on blur
-    $('input[name*="yield"]').on('blur', function() {
-        var $input = $(this);
-        var value = $input.val();
-        var maturity = $input.attr('name').match(/manual_(\d+)_yield/);
-
-        if (maturity && value !== '' && value !== null) {
-            if (isNaN(parseFloat(value)) || !isFinite(value)) {
-                $input.css('border-color', '#dc2626');
-                $input.next('.uk-yield-field-error').remove();
-                $input.after('<span class="uk-yield-field-error" style="color: #dc2626; font-size: 12px; display: block; margin-top: 4px;">Must be a valid number</span>');
-            } else if (parseFloat(value) < 0 || parseFloat(value) > 100) {
-                $input.css('border-color', '#dc2626');
-                $input.next('.uk-yield-field-error').remove();
-                $input.after('<span class="uk-yield-field-error" style="color: #dc2626; font-size: 12px; display: block; margin-top: 4px;">Must be between 0 and 100</span>');
-            } else {
-                $input.css('border-color', '');
-                $input.next('.uk-yield-field-error').remove();
-            }
-        } else {
-            $input.css('border-color', '');
-            $input.next('.uk-yield-field-error').remove();
-        }
-    });
-
-    // Clear validation errors when input changes
-    $('input[name*="yield"], input[name*="change"]').on('input', function() {
-        $(this).css('border-color', '');
-        $(this).next('.uk-yield-field-error').remove();
-
-        // Clear global errors if they exist
-        if ($('.uk-yield-validation-errors').length) {
-            $('.uk-yield-validation-errors').remove();
-        }
-    });
-
     // Force refresh cache with confirmation
     $('#uk-yield-refresh-cache').on('click', function() {
         var $button = $(this);
         var originalText = $button.text();
 
         // Confirmation dialog
-        if (!confirm('Are you sure you want to refresh the yield data? This will fetch fresh data from the configured source.')) {
+        if (!confirm('Are you sure you want to refresh the yield data? This will fetch fresh data from the API.')) {
             return;
         }
 
@@ -227,8 +63,45 @@ jQuery(document).ready(function($) {
         });
     });
 
-    // Initialize display on page load
-    $('#uk-yield-data-source').trigger('change');
+    // Force server refresh (requires API key)
+    $('#uk-yield-trigger-refresh').on('click', function() {
+        var $button = $(this);
+        var originalText = $button.text();
+
+        if (!confirm('Force a server-side data refresh? This requires a valid API key.')) {
+            return;
+        }
+
+        $button.html('<span class="uk-yield-spinner" style="display: inline-block; width: 16px; height: 16px; border: 2px solid #f3f3f3; border-top: 2px solid #3498db; border-radius: 50%; animation: uk-yield-spin 1s linear infinite;"></span> Refreshing...').prop('disabled', true);
+
+        $.ajax({
+            url: ukYieldAdmin.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'uk_yield_trigger_server_refresh',
+                nonce: ukYieldAdmin.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    $button.html('✓ Server refresh triggered!');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    $button.html('✗ Error: ' + response.data);
+                    setTimeout(function() {
+                        $button.text(originalText).prop('disabled', false);
+                    }, 3000);
+                }
+            },
+            error: function() {
+                $button.html('✗ Error triggering refresh. Please try again.');
+                setTimeout(function() {
+                    $button.text(originalText).prop('disabled', false);
+                }, 3000);
+            }
+        });
+    });
 
     // ============================================
     // BUG REPORT MODAL FUNCTIONALITY
@@ -239,7 +112,7 @@ jQuery(document).ready(function($) {
     // Pre-fill system information
     function getSystemInfo() {
         return {
-            pluginVersion: ukYieldAdmin.pluginVersion || '1.0.0',
+            pluginVersion: ukYieldAdmin.pluginVersion || '2.0.0',
             wpVersion: ukYieldAdmin.wpVersion || 'Unknown',
             phpVersion: ukYieldAdmin.phpVersion || 'Unknown',
             theme: ukYieldAdmin.theme || 'Unknown',
@@ -432,122 +305,5 @@ jQuery(document).ready(function($) {
             var counterClass = currentLength > maxLength ? 'uk-yield-error' : 'uk-yield-warning';
             $textarea.after('<span class="uk-yield-char-count ' + counterClass + '">' + currentLength + '/' + maxLength + ' characters</span>');
         }
-    });
-
-    // ============================================
-    // IMPORT FUNCTIONALITY
-    // ============================================
-
-    // Auto download from BoE
-    $('#uk-yield-auto-download').on('click', function() {
-        var $button = $(this);
-        var $status = $('#uk-yield-auto-download-status');
-        var originalText = $button.text();
-
-        if (!confirm('Download the latest yield data from Bank of England? This will overwrite any manually entered data.')) {
-            return;
-        }
-
-        $button.prop('disabled', true).text('Downloading...');
-        $status.text('Fetching data from Bank of England...').css('color', '#0369a1');
-
-        $.ajax({
-            url: ukYieldAdmin.ajax_url,
-            type: 'POST',
-            data: {
-                action: 'uk_yield_auto_download',
-                nonce: ukYieldAdmin.nonce
-            },
-            success: function(response) {
-                if (response.success) {
-                    $status.html('<span style="color: #166534;">✓ ' + response.data.message + '</span>');
-                    $button.text('Download Successful!');
-
-                    // Update manual entry fields with imported data
-                    if (response.data.data && response.data.data.yields) {
-                        var yields = response.data.data.yields;
-                        for (var maturity in yields) {
-                            if (yields.hasOwnProperty(maturity)) {
-                                $('input[name="uk_yield_rates_manual_' + maturity + '_yield"]').val(yields[maturity].yield);
-                                $('input[name="uk_yield_rates_manual_' + maturity + '_change"]').val(yields[maturity].change);
-                            }
-                        }
-                        $('input[name="uk_yield_rates_manual_date"]').val(response.data.data.date);
-                    }
-
-                    setTimeout(function() {
-                        location.reload();
-                    }, 2000);
-                } else {
-                    $status.html('<span style="color: #dc2626;">✗ ' + response.data + '</span>');
-                    $button.prop('disabled', false).text(originalText);
-                }
-            },
-            error: function() {
-                $status.html('<span style="color: #dc2626;">✗ Network error. Please try again.</span>');
-                $button.prop('disabled', false).text(originalText);
-            }
-        });
-    });
-
-    // File upload form submission
-    $('#uk-yield-import-form').on('submit', function(e) {
-        e.preventDefault();
-
-        var $form = $(this);
-        var $button = $('#uk-yield-import-btn');
-        var $status = $('#uk-yield-import-status');
-        var $fileInput = $('#uk-yield-file-input');
-        var originalText = $button.text();
-
-        if (!$fileInput.val()) {
-            $status.html('<span style="color: #dc2626;">Please select a file to upload.</span>');
-            return;
-        }
-
-        var formData = new FormData($form[0]);
-        formData.append('action', 'uk_yield_import_file');
-        formData.append('nonce', ukYieldAdmin.nonce);
-
-        $button.prop('disabled', true).text('Importing...');
-        $status.text('Processing file...').css('color', '#0369a1');
-
-        $.ajax({
-            url: ukYieldAdmin.ajax_url,
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                if (response.success) {
-                    $status.html('<span style="color: #166534;">✓ ' + response.data.message + '</span>');
-                    $button.text('Import Successful!');
-                    $fileInput.val('');
-
-                    // Update manual entry fields with imported data
-                    if (response.data.data && response.data.data.yields) {
-                        var yields = response.data.data.yields;
-                        for (var maturity in yields) {
-                            if (yields.hasOwnProperty(maturity)) {
-                                $('input[name="uk_yield_rates_manual_' + maturity + '_yield"]').val(yields[maturity].yield);
-                                $('input[name="uk_yield_rates_manual_' + maturity + '_change"]').val(yields[maturity].change);
-                            }
-                        }
-                        $('input[name="uk_yield_rates_manual_date"]').val(response.data.data.date);
-                    }
-
-                    setTimeout(function() {
-                        location.reload();
-                    }, 2000);
-                } else {
-                    $status.html('<span style="color: #dc2626;">✗ ' + response.data + '</span>');
-                    $button.prop('disabled', false).text(originalText);
-                }
-            },
-            error: function() {
-                $status.html('<span style="color: #dc2626;">✗ Network error. Please try again.</span>');
-                $button.prop('disabled', false).text(originalText);
-            }
-        });
     });
 });
