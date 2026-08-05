@@ -13,13 +13,32 @@ jQuery(document).ready(function($) {
         $(target).addClass('active');
     });
 
+    // Show/hide sections based on data source selection
+    $('#uk-yield-data-source').on('change', function() {
+        var source = $(this).val();
+
+        // Hide all sections first
+        $('#uk-yield-manual-section').hide();
+        $('#uk-yield-api-section').hide();
+
+        // Show relevant section
+        if (source === 'manual') {
+            $('#uk-yield-manual-section').show();
+        } else if (source === 'api') {
+            $('#uk-yield-api-section').show();
+        }
+    });
+
+    // Initialize display on page load
+    $('#uk-yield-data-source').trigger('change');
+
     // Force refresh cache with confirmation
     $('#uk-yield-refresh-cache').on('click', function() {
         var $button = $(this);
         var originalText = $button.text();
 
         // Confirmation dialog
-        if (!confirm('Are you sure you want to refresh the yield data? This will fetch fresh data from the API.')) {
+        if (!confirm('Are you sure you want to refresh the yield data?')) {
             return;
         }
 
@@ -112,7 +131,7 @@ jQuery(document).ready(function($) {
     // Pre-fill system information
     function getSystemInfo() {
         return {
-            pluginVersion: ukYieldAdmin.pluginVersion || '2.0.0',
+            pluginVersion: ukYieldAdmin.pluginVersion || '2.1.0',
             wpVersion: ukYieldAdmin.wpVersion || 'Unknown',
             phpVersion: ukYieldAdmin.phpVersion || 'Unknown',
             theme: ukYieldAdmin.theme || 'Unknown',

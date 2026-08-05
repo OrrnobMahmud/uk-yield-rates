@@ -3,7 +3,7 @@
  * Plugin Name: UK Yield Rates Live
  * Plugin URI: https://orrnobmahmud.com
  * Description: Display live UK government bond (gilt) yield rates using shortcodes and Gutenberg blocks. Perfect for financial advisors, mortgage brokers, and investment platforms.
- * Version: 2.0.0
+ * Version: 2.1.0
  * Author: Orrnob Mahmud Local SEO Strategist
  * Author URI: https://orrnobmahmud.com
  * License: GPL v2 or later
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Plugin constants
-define('UK_YIELD_RATES_VERSION', '2.0.0');
+define('UK_YIELD_RATES_VERSION', '2.1.0');
 define('UK_YIELD_RATES_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('UK_YIELD_RATES_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('UK_YIELD_RATES_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -223,8 +223,10 @@ final class UK_Yield_Rates {
     public function activate() {
         // Set default options
         $defaults = [
+            'api_source' => 'manual',
             'api_url' => '',
             'api_key' => '',
+            'manual_date' => gmdate('Y-m-d'),
             'default_format' => 'inline',
             'decimal_places' => '2',
             'show_change' => 'yes',
@@ -238,6 +240,17 @@ final class UK_Yield_Rates {
         foreach ($defaults as $key => $value) {
             if (get_option('uk_yield_rates_' . $key) === false) {
                 update_option('uk_yield_rates_' . $key, $value);
+            }
+        }
+
+        // Set default manual yield values
+        $manual_maturities = ['2Y', '5Y', '10Y', '20Y', '30Y'];
+        foreach ($manual_maturities as $maturity) {
+            if (get_option('uk_yield_rates_manual_' . $maturity . '_yield') === false) {
+                update_option('uk_yield_rates_manual_' . $maturity . '_yield', '');
+            }
+            if (get_option('uk_yield_rates_manual_' . $maturity . '_change') === false) {
+                update_option('uk_yield_rates_manual_' . $maturity . '_change', '0');
             }
         }
 

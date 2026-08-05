@@ -3,7 +3,7 @@
  * Admin Settings for UK Yield Rates
  *
  * @package UK_Yield_Rates
- * @version 2.0.0
+ * @version 2.1.0
  * @license GPL-2.0-or-later
  * @author Orrnob Mahmud
  */
@@ -47,6 +47,12 @@ class UK_Yield_Admin {
      * Register settings
      */
     public function register_settings() {
+        // Data Source
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_api_source', [
+            'sanitize_callback' => [$this, 'sanitize_api_source'],
+            'default'           => 'manual',
+        ]);
+
         // API Settings
         register_setting('uk_yield_rates_settings', 'uk_yield_rates_api_url', [
             'sanitize_callback' => 'esc_url_raw',
@@ -56,6 +62,24 @@ class UK_Yield_Admin {
             'sanitize_callback' => 'sanitize_text_field',
             'default'           => '',
         ]);
+
+        // Manual Entry Settings
+        register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_date', [
+            'sanitize_callback' => 'sanitize_text_field',
+            'default'           => gmdate('Y-m-d'),
+        ]);
+
+        $maturities = ['2Y', '5Y', '10Y', '20Y', '30Y'];
+        foreach ($maturities as $maturity) {
+            register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_' . $maturity . '_yield', [
+                'sanitize_callback' => [$this, 'sanitize_yield'],
+                'default'           => '',
+            ]);
+            register_setting('uk_yield_rates_settings', 'uk_yield_rates_manual_' . $maturity . '_change', [
+                'sanitize_callback' => [$this, 'sanitize_change'],
+                'default'           => '0',
+            ]);
+        }
 
         // Display Settings
         register_setting('uk_yield_rates_settings', 'uk_yield_rates_default_format', [
@@ -92,6 +116,30 @@ class UK_Yield_Admin {
             'sanitize_callback' => [$this, 'sanitize_refresh_interval'],
             'default'           => '5',
         ]);
+    }
+
+    /**
+     * Sanitize API source
+     */
+    public function sanitize_api_source($value) {
+        $allowed = ['manual', 'api'];
+        return in_array($value, $allowed, true) ? $value : 'manual';
+    }
+
+    /**
+     * Sanitize yield value
+     */
+    public function sanitize_yield($value) {
+        $value = sanitize_text_field($value);
+        return is_numeric($value) ? $value : '';
+    }
+
+    /**
+     * Sanitize change value
+     */
+    public function sanitize_change($value) {
+        $value = sanitize_text_field($value);
+        return is_numeric($value) ? $value : '0';
     }
 
     /**

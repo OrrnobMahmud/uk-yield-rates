@@ -1,283 +1,111 @@
-# UK Yield Rates Live
+# UK Yield Rates
 
-[![Version](https://img.shields.io/badge/version-1.3.2-blue.svg)](https://github.com/OrrnobMahmud/uk-yield-rates/releases)
-[![License](https://img.shields.io/badge/license-GPL%20v2%2B-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
-[![PHP Version](https://img.shields.io/badge/php-7.4%2B-purple.svg)](https://php.net)
+Display live UK Government Bond (Gilt) yield rates in WordPress. Perfect for mortgage brokers, financial advisors, and property websites.
 
-A WordPress plugin to display UK government bond (gilt) yield rates using shortcodes and Gutenberg blocks. Perfect for estate agents, mortgage brokers, and financial advisors who need to show current yield rates in their website content.
+## The Problem
 
-**Author:** [Orrnob Mahmud](https://orrnobmahmud.com)  
-**Website:** [https://orrnobmahmud.com](https://orrnobmahmud.com)  
-**GitHub:** [https://github.com/OrrnobMahmud/uk-yield-rates](https://github.com/OrrnobMahmud/uk-yield-rates)
+Mortgage and property service pages need current gilt yields to stay relevant. Without automation, this means manually updating dozens of pages every time rates change.
 
----
+## The Solution
 
-## 🎯 Key Features
+A WordPress plugin that displays Bank of England yield data via shortcodes. Two modes:
 
-### Text Style Inheritance ✨
-The shortcode **automatically inherits text styles** from its surrounding context! Place it in:
-- **Headers** (`<h1>`, `<h2>`, etc.) → yields display in header style
-- **Bold text** (`<strong>`) → yields display bold
-- **Italic text** (`<em>`) → yields display italic
-- **Any styled element** → inherits all text properties
+- **Manual Entry (Free)** - Enter yields yourself. No API required.
+- **API Mode (Automatic)** - Connect to a Yield API for automatic updates.
 
-### Multiple Data Sources 📊
-- **Manual Entry** (Recommended) - Most reliable, FREE
-- **BoE Direct Download** (Automatic - FREE) - Official Bank of England data
-- **BoE Custom Endpoint** - Free with Cloudflare/Vercel (experimental)
-- **FRED API** - Free tier available
-- **File Import** - Upload ZIP, XLSX, or CSV files
-- **Auto Mode** - Tries all sources with fallback
+## Installation
 
-### Display Formats 🎨
-- **Inline** - Perfect for paragraphs
-- **Sidebar Widget** - Standalone widget format
-- **Table** - Full comparison table
-- **Compact** - Single-line display
+1. Download the plugin ZIP from [GitHub Releases](https://github.com/OrrnobMahmud/uk-yield-rates/releases)
+2. In WordPress admin, go to **Plugins → Add New → Upload Plugin**
+3. Upload the ZIP file and click **Install Now**
+4. Click **Activate Plugin**
 
-### Block Editor Integration 🧩
-- Gutenberg block with live preview
-- **Preview modes:** Live data, Sample data, Custom shortcode
-- **Theme preview:** See light/dark themes in real-time
-- Copy shortcode button
-- Visual configuration panel
+## Configuration
 
-### Admin Interface 💼
-- Beautiful, intuitive settings page
-- **Real-time validation** for manual entries
-- **Confirmation dialogs** for critical actions
-- **Loading spinners** for AJAX operations
-- **Bug reporting** directly to GitHub
-- **Feature requests** integration
+Go to **Settings → UK Yield Rates**:
 
----
+### Manual Entry Mode (Default)
 
-## 📥 Installation
+1. Select **Manual Entry** as data source
+2. Enter current yields for 2Y, 5Y, 10Y, 20Y, 30Y
+3. Click **Save Changes**
 
-> **⚠️ Note:** This plugin is NOT yet available on WordPress.org. Install from GitHub.
+Find current rates by searching "UK gilt yields today" or checking your broker platform.
 
-### Option 1: Download Pre-built Release (Easiest)
+### API Mode (Automatic)
 
-1. Go to [GitHub Releases](https://github.com/OrrnobMahmud/uk-yield-rates/releases)
-2. Download the latest release ZIP file
-3. In WordPress, go to **Plugins > Add New**
-4. Click **Upload Plugin**
-5. Choose the ZIP file and click **Install Now**
-6. Click **Activate**
+1. Select **API** as data source
+2. Enter your API URL
+3. Click **Save Changes**
+4. Click **Refresh Data** to fetch initial yields
 
-### Option 2: Build from Source
+## Usage
 
-```bash
-# Clone the repository
-git clone https://github.com/OrrnobMahmud/uk-yield-rates.git
-cd uk-yield-rates
+### Shortcodes
 
-# Install dependencies
-npm install
-
-# Build the Gutenberg block
-npm run build
-
-# Create a ZIP file of the folder and upload to WordPress
+**Single maturity (inline):**
+```
+[uk_yield_rates format="inline" maturity="10Y"]
 ```
 
-### Post-Installation Setup
+**Multiple maturities:**
+```
+[uk_yield_rates format="inline" maturity="2Y,5Y,10Y,20Y,30Y"]
+```
 
-1. Go to **Settings > UK Yield Rates**
-2. Choose your data source (Manual recommended)
-3. Enter yield rates if using Manual mode
-4. Use shortcodes or Gutenberg block to display yields
-
-**Detailed instructions:** See [INSTALL.md](INSTALL.md)
-
----
-
-## 📝 Shortcodes
-
-### Basic Usage
-
-```php
-// Default inline display
-[uk_yield_rates]
-
-// Single maturity inline
-[uk_yield_rates inline="yes" maturity="10"]
-
-// Multiple maturities inline
-[uk_yield_rates inline="yes" maturity="2,5,10"]
-
-// Sidebar widget
-[uk_yield_rates format="sidebar"]
-
-// Full table
+**Full table:**
+```
 [uk_yield_rates format="table"]
+```
 
-// Compact single line
+**Key maturities table:**
+```
+[uk_yield_rates format="table" maturity="2Y,5Y,10Y,20Y,30Y"]
+```
+
+**Compact single line:**
+```
 [uk_yield_rates format="compact"]
 ```
 
-### Real-World Examples
-
-**Estate Agent:**
-```html
-<p>Our fixed-rate mortgages start from 4.25%, influenced by the 
-<span class="yield">[uk_yield_rates inline="yes" maturity="5"]</span> 
-5-year gilt yield. Contact us today!</p>
+**Sidebar widget:**
+```
+[uk_yield_rates format="sidebar"]
 ```
 
-**In a Header (Text Inheritance):**
-```html
-<h2>Mortgage rates follow the 
-[uk_yield_rates inline="yes" maturity="10"] 10-year gilt yield</h2>
-```
-The yield will inherit the header's font weight, size, and color!
-
----
-
-## ⚙️ Shortcode Attributes
+### Options
 
 | Attribute | Values | Default | Description |
 |-----------|--------|---------|-------------|
-| `maturity` | all, 2, 5, 10, 20, 30 | all | Which yield maturities to display |
-| `format` | inline, sidebar, table, compact | inline | Display format |
-| `inline` | yes, no | no | Force inline display |
-| `show_change` | yes, no | yes | Show change indicator (↑↓→) |
-| `show_updated` | yes, no | yes | Show last updated timestamp |
+| `format` | inline, table, compact, sidebar | inline | Display format |
+| `maturity` | all, 2Y, 5Y, 10Y, 20Y, 30Y | all | Which maturities to show |
+| `show_change` | yes, no | yes | Show change indicator |
+| `show_updated` | yes, no | yes | Show last updated time |
 | `decimal` | 2, 3, 4 | 2 | Decimal places |
 | `theme` | light, dark | light | Color theme |
 
----
+### Example in Content
 
-## 🎨 Text Style Inheritance
+> Our mortgage rates are influenced by the [uk_yield_rates format="inline" maturity="10Y"] 10-year gilt yield.
 
-The plugin inherits text styles from parent elements:
+## Available Maturities
 
-```html
-<!-- Yields display as h1 -->
-<h1>[uk_yield_rates inline="yes" maturity="10"]</h1>
+- **Short-term:** 6M, 1Y, 2Y, 3Y, 4Y, 5Y
+- **Medium-term:** 6Y, 7Y, 8Y, 9Y, 10Y
+- **Long-term:** 11Y, 12Y, 13Y, 14Y, 15Y, 20Y, 25Y, 30Y, 40Y
 
-<!-- Yields display bold -->
-<strong>[uk_yield_rates inline="yes" maturity="10"]</h1>
+Manual entry mode supports: 2Y, 5Y, 10Y, 20Y, 30Y
 
-<!-- Yields inherit custom styles -->
-<span style="color: red; font-size: 24px;">
-  [uk_yield_rates inline="yes" maturity="10"]
-</span>
-```
+## Requirements
 
-**Only exception:** Change indicators (↑↓→) have semantic colors (green/red/gray).
+- WordPress 5.0+
+- PHP 7.4+
 
----
+## Support
 
-## 🖥️ Block Editor Features
+- [Report a Bug](https://github.com/OrrnobMahmud/uk-yield-rates/issues/new?labels=bug)
+- [Request a Feature](https://github.com/OrrnobMahmud/uk-yield-rates/issues/new?labels=enhancement)
 
-1. Add "UK Yield Rates" block in Gutenberg
-2. Configure in Inspector Controls (right sidebar)
-3. See live preview in editor
-4. Toggle between preview modes (Live, Sample, Custom)
-5. Switch themes in real-time
-6. Copy shortcode with one click
+## License
 
----
-
-## 💼 Admin Interface
-
-- **Data Source tab** - Configure how to get yields
-- **Display Settings tab** - Default format, theme, decimals
-- **Advanced tab** - Cache duration, auto-refresh
-- **Support section** - Bug reporting, feature requests
-
-Features:
-- Real-time validation for manual entries
-- Confirmation dialogs for critical actions
-- Loading spinners during AJAX operations
-- Direct GitHub integration for issues
-
----
-
-## 🐛 Bug Reporting & Support
-
-### Report a Bug
-1. Go to **Settings > UK Yield Rates**
-2. Click **"Report Bug on GitHub"**
-3. Fill in the form (system info auto-populated)
-4. Click **"Open GitHub Issue"**
-
-### Request a Feature
-1. Go to **Settings > UK Yield Rates**
-2. Click **"Request Feature on GitHub"**
-3. Describe your idea
-4. Submit via GitHub
-
-### Get Help
-- **GitHub Issues**: https://github.com/OrrnobMahmud/uk-yield-rates/issues
-- **Documentation**: See README.md and INSTALL.md
-
----
-
-## 🔄 Changelog
-
-### 1.3.2 (2026-07-30)
-- Fixed dark theme CSS class not applied to shortcode output
-
-### 1.3.1 (2026-07-30)
-- Fixed auto-refresh not working for anonymous visitors
-
-### 1.3.0 (2026-07-30)
-- **BoE Direct Download** - Automatic ZIP download and Excel parsing
-- **File Upload Import** - Upload ZIP, XLSX, or CSV files manually
-- **Unified Provider Interface** - Consistent API across all data sources
-- Cloudflare Worker marked experimental (BoE CSV URL returns 404)
-
-### 1.2.0 (2026-07-30)
-- Fixed wp_localize_script handle mismatch (frontend and admin)
-- Fixed version constant mismatch
-- Fixed build script packaging
-
-### 1.1.0 (2026-07-29)
-- **Text Style Inheritance** - Shortcodes inherit parent element styles
-- **GitHub Bug Reporting** - Report bugs directly from admin
-- **Feature Request System** - Request features via GitHub
-- **Block Editor Preview Modes** - Live, sample, and custom shortcode preview
-- **Theme Preview** - See light/dark themes in editor
-- Improved admin UI with validation and loading states
-- Added frontend animations and tooltips
-- Fixed auto-refresh maturity parameter issue
-- Fixed weekend cache duration override
-- Added XSS sanitization for block editor
-
-### 1.0.0 (2026-07-28)
-- Initial release
-
----
-
-## 📄 License
-
-GPL v2 or later - see [LICENSE](LICENSE) for details
-
----
-
-## 👤 Author
-
-**Orrnob Mahmud**
-- Website: [https://orrnobmahmud.com](https://orrnobmahmud.com)
-- GitHub: [https://github.com/OrrnobMahmud](https://github.com/OrrnobMahmud)
-
----
-
-## 🙏 Contributing
-
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
----
-
-## 🔒 Security
-
-To report security vulnerabilities, please see [SECURITY.md](SECURITY.md).
-
----
-
-## ⭐ Support
-
-If you find this plugin useful, please consider:
-- ⭐ [Starring the GitHub repository](https://github.com/OrrnobMahmud/uk-yield-rates)
+GPL v2 or later. See [LICENSE](LICENSE) for details.

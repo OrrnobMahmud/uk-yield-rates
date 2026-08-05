@@ -1,10 +1,10 @@
 <?php
 /**
  * API Handler for UK Yield Rates
- * Fetches data from the UK Yield Rates API
+ * Supports both manual entry and API modes
  *
  * @package UK_Yield_Rates
- * @version 2.0.0
+ * @version 2.1.0
  * @license GPL-2.0-or-later
  * @author Orrnob Mahmud
  */
@@ -19,6 +19,11 @@ class UK_Yield_API {
      * Single instance
      */
     private static $instance = null;
+
+    /**
+     * Supported maturities for manual entry
+     */
+    const MANUAL_MATURITIES = ['2Y', '5Y', '10Y', '20Y', '30Y'];
 
     /**
      * Get single instance
@@ -36,6 +41,14 @@ class UK_Yield_API {
     private function __construct() {}
 
     /**
+     * Get data source mode
+     */
+    public function get_mode() {
+        $api_url = $this->get_api_url();
+        return !empty($api_url) ? 'api' : 'manual';
+    }
+
+    /**
      * Get API URL
      */
     private function get_api_url() {
@@ -50,9 +63,19 @@ class UK_Yield_API {
     }
 
     /**
-     * Fetch all yields from API
+     * Fetch all yields (auto-detects mode)
      */
     public function fetch_yields() {
+        if ($this->get_mode() === 'api') {
+            return $this->fetch_from_api();
+        }
+        return $this->fetch_from_manual();
+    }
+
+    /**
+     * Fetch from API
+     */
+    private function fetch_from_api() {
         $api_url = $this->get_api_url();
 
         if (empty($api_url)) {
@@ -95,9 +118,47 @@ class UK_Yield_API {
     }
 
     /**
+     * Fetch from manual entry
+     */
+    private function fetch_from_manual() {
+        $yields = [];
+        $date = get_option('uk_yield_rates_manual_date', gmdate('Y-m-d'));
+
+        foreach (self::MANUAL_MATURITIES as $maturity) {
+            $yield_value = get_option('uk_yield_rates_manual_' . $maturity . '_yield', '');
+            $change_value = get_option('uk_yield_rates_manual_' . $maturity . '_change', '0');
+
+            if ($yield_value !== '') {
+                $yields[$maturity] = [
+                    'maturity' => $maturity,
+                    'yield' => floatval($yield_value),
+                    'change' => floatval($change_value),
+                    'date' => $date,
+                ];
+            }
+        }
+
+        if (empty($yields)) {
+            return false;
+        }
+
+        return $this->format_yield_data($yields, 'manual');
+    }
+
+    /**
      * Fetch yield for specific maturity
      */
     public function fetch_yield($maturity) {
+        if ($this->get_mode() === 'api') {
+            return $this->fetch_yield_from_api($maturity);
+        }
+        return $this->fetch_yield_from_manual($maturity);
+    }
+
+    /**
+     * Fetch yield from API
+     */
+    private function fetch_yield_from_api($maturity) {
         $api_url = $this->get_api_url();
 
         if (empty($api_url)) {
@@ -131,9 +192,39 @@ class UK_Yield_API {
     }
 
     /**
+     * Fetch yield from manual entry
+     */
+    private function fetch_yield_from_manual($maturity) {
+        $yield_value = get_option('uk_yield_rates_manual_' . $maturity . '_yield', '');
+        $change_value = get_option('uk_yield_rates_manual_' . $maturity . '_change', '0');
+        $date = get_option('uk_yield_rates_manual_date', gmdate('Y-m-d'));
+
+        if ($yield_value === '') {
+            return false;
+        }
+
+        return [
+            'maturity' => $maturity,
+            'yield' => floatval($yield_value),
+            'change' => floatval($change_value),
+            'date' => $date,
+        ];
+    }
+
+    /**
      * Fetch yield curve
      */
     public function fetch_curve() {
+        if ($this->get_mode() === 'api') {
+            return $this->fetch_curve_from_api();
+        }
+        return $this->fetch_from_manual();
+    }
+
+    /**
+     * Fetch curve from API
+     */
+    private function fetch_curve_from_api() {
         $api_url = $this->get_api_url();
 
         if (empty($api_url)) {
@@ -179,6 +270,10 @@ class UK_Yield_API {
      * Health check
      */
     public function health_check() {
+        if ($this->get_mode() === 'manual') {
+            return !empty(get_option('uk_yield_rates_manual_date', ''));
+        }
+
         $api_url = $this->get_api_url();
 
         if (empty($api_url)) {
@@ -206,6 +301,10 @@ class UK_Yield_API {
      * Trigger refresh (requires API key)
      */
     public function trigger_refresh() {
+        if ($this->get_mode() === 'manual') {
+            return false;
+        }
+
         $api_url = $this->get_api_url();
         $api_key = $this->get_api_key();
 
