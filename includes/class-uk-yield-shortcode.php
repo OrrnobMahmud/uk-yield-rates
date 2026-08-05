@@ -84,6 +84,11 @@ class UK_Yield_Shortcode {
             return '<span class="uk-yield-error">' . esc_html__('No yield data available.', 'uk-yield-rates') . '</span>';
         }
 
+        // Sort by maturity
+        uksort($yields, function($a, $b) {
+            return $this->maturity_sort($a, $b);
+        });
+
         // Determine format
         $format = $atts['inline'] === 'yes' ? 'inline' : $atts['format'];
 
@@ -131,7 +136,7 @@ class UK_Yield_Shortcode {
             $change_value = abs($change) > 0 ? $change_symbol . number_format(abs($change), $decimal) : '';
 
             $html .= '<span class="uk-yield-item">';
-            $html .= '<span class="uk-yield-label">' . esc_html($maturity) . '-Year: </span>';
+            $html .= '<span class="uk-yield-label">' . esc_html($maturity) . ': </span>';
             $html .= '<span class="uk-yield-value">' . esc_html($yield_value) . '</span>';
 
             if ($atts['show_change'] === 'yes' && !empty($change_value)) {
@@ -230,7 +235,7 @@ class UK_Yield_Shortcode {
             $change_value = abs($change) > 0 ? $change_symbol . number_format(abs($change), $decimal) : '→ 0.00';
 
             $html .= '<tr>';
-            $html .= '<td class="uk-yield-td-maturity">' . esc_html($maturity) . '-Year</td>';
+            $html .= '<td class="uk-yield-td-maturity">' . esc_html($maturity) . '</td>';
             $html .= '<td class="uk-yield-td-yield">' . esc_html($yield_value) . '</td>';
 
             if ($atts['show_change'] === 'yes') {
@@ -283,7 +288,7 @@ class UK_Yield_Shortcode {
             $change_symbol = $change > 0 ? '+' : '';
             $change_value = $change_symbol . number_format($change, $decimal);
 
-            $parts[] = esc_html($maturity) . 'Y: ' . esc_html($yield_value) . ' (' . esc_html($change_value) . ')';
+            $parts[] = esc_html($maturity) . ': ' . esc_html($yield_value) . ' (' . esc_html($change_value) . ')';
         }
 
         $html .= implode(' | ', $parts);
@@ -328,5 +333,29 @@ class UK_Yield_Shortcode {
             return $datetime;
         }
         return date_i18n('G:i', $timestamp);
+    }
+
+    /**
+     * Sort maturities by numeric value
+     */
+    private function maturity_sort($a, $b) {
+        $a_val = $this->maturity_to_months($a);
+        $b_val = $this->maturity_to_months($b);
+        return $a_val - $b_val;
+    }
+
+    /**
+     * Convert maturity string to months for sorting
+     */
+    private function maturity_to_months($maturity) {
+        $maturity = strtoupper(trim($maturity));
+        
+        if (preg_match('/^(\d+)M$/', $maturity, $matches)) {
+            return $matches[1];
+        } elseif (preg_match('/^(\d+)Y$/', $maturity, $matches)) {
+            return $matches[1] * 12;
+        } else {
+            return 0;
+        }
     }
 }
